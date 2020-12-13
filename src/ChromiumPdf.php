@@ -2,6 +2,7 @@
 
 namespace Beganovich\ChromiumPdf;
 
+
 class ChromiumPdf
 {
     /**
@@ -44,10 +45,15 @@ class ChromiumPdf
     }
 
     /**
+     * @param bool $withPrintToPdf
      * @return string
      */
-    public function getOutputPath(): string
+    public function getOutputPath(bool $withPrintToPdf = false): string
     {
+        if ($withPrintToPdf) {
+            return sprintf('--print-to-pdf="%s"', $this->outputPath);
+        }
+
         return $this->outputPath;
     }
 
@@ -81,13 +87,18 @@ class ChromiumPdf
         return $this;
     }
 
-    public function generate()
+    /**
+     * Main method to generate PDFs.
+     *
+     * @return void
+     */
+    public function generate(): void
     {
         $command = sprintf(
             '%s --headless --disable-gpu --print-to-pdf="%s" %s',
             $this->getChromiumPath(), $this->getOutputPath(), $this->getUrl()
         );
 
-        exec($command);
+        exec($command, $output, $resultCode);
     }
 }

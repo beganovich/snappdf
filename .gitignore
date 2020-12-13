@@ -3,3 +3,4 @@ composer.phar
 /.idea/
 .phpunit.result.cache
 composer.lock
+example.pdf

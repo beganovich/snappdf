@@ -3,21 +3,25 @@
 namespace Test\ChromiumPdf;
 
 use Beganovich\ChromiumPdf\ChromiumPdf;
+use Beganovich\ChromiumPdf\Exception\GeneratingPdfWasUnsuccessful;
 use PHPUnit\Framework\TestCase;
 
 class ChromiumPdfTest extends TestCase
 {
-    /** @tests */
-    public function generating_pdf_works()
+    public function testGeneratingPdfWorks()
     {
-        $path = '/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe';
+        $path = '/usr/bin/google-chrome';
+        $url = 'http://invoiceninja.com';
+        $outputPath = dirname(__DIR__, 1) . '/example.pdf';
 
         $chromiumPdf = new ChromiumPdf();
 
         $chromiumPdf
             ->setChromiumPath($path)
-            ->setUrl('https://google.com')
-            ->setOutputPath('C:\Users\benja\example.pdf')
+            ->setUrl($url)
+            ->setOutputPath($outputPath)
             ->generate();
+
+        $this->assertTrue(file_exists($chromiumPdf->getOutputPath()));
     }
 }
