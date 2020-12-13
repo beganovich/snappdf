@@ -1,0 +1,28 @@
+{
+    "name": "beganovich/chromium-pdf",
+    "description": "Generate PDFs using headless Chromium",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Benjamin Beganović",
+            "email": "k1pstabug@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Beganovich\\ChromiumPdf\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\ChromiumPdf\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
