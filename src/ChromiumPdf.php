@@ -20,6 +20,11 @@ class ChromiumPdf
      */
     private $outputPath;
 
+    /**
+     * @var string
+     */
+    private $html;
+
     public function __construct()
     {
         // ..
@@ -28,7 +33,7 @@ class ChromiumPdf
     /**
      * @return string
      */
-    public function getUrl(): string
+    public function getUrl(): ?string
     {
         return $this->url;
     }
@@ -88,17 +93,63 @@ class ChromiumPdf
     }
 
     /**
+     * @return string
+     */
+    public function getHtml(): ?string
+    {
+        return $this->html;
+    }
+
+    /**
+     * @param string $html
+     * @return ChromiumPdf
+     */
+    public function setHtml(string $html): self
+    {
+        $this->html = $html;
+
+        return $this;
+    }
+
+    /**
      * Main method to generate PDFs.
      *
      * @return void
      */
     public function generate(): void
     {
+        $content = [
+            'type' => null,
+            'content' => null,
+        ];
+
+        if ($this->getUrl()) {
+            $content['type'] = 'url';
+            $content['content'] = $this->getUrl();
+        }
+
+        if ($this->getHtml()) {
+            $temporaryFile = tempnam(sys_get_temp_dir(), "Pre_");
+            rename($temporaryFile, $temporaryFile .= '.html');
+            file_put_contents($temporaryFile, $this->getHtml());
+
+            $content['type'] = 'html';
+            $content['content'] = $temporaryFile;
+        }
+
+        if (!$content['content']) {
+            throw new \Exception('No source provided. Make sure you call setHtml() or setUrl() before generate().');
+        }
+
         $command = sprintf(
-            '%s --headless --disable-gpu --print-to-pdf="%s" %s',
-            $this->getChromiumPath(), $this->getOutputPath(), $this->getUrl()
+            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins %s',
+            $this->getChromiumPath(), $this->getOutputPath(), $content['content']
         );
 
         exec($command, $output, $resultCode);
+
+        if ($content['type'] == 'html') {
+            unlink($temporaryFile);
+        }
     }
 }

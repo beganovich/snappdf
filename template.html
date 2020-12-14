@@ -1,0 +1,185 @@
+<style id="style">
+    * {
+        font-size: "$font_size";
+    }
+
+    p {
+        margin: 0;
+        padding: 0;
+        page-break-after: always;
+    }
+
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 1cm;
+    }
+
+    .header-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .header-wrapper .company-logo {
+        height: 5rem;
+    }
+
+    .header-wrapper #company-address {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-wrapper #entity-details {
+        margin-top: 1.5rem;
+        text-align: left;
+        width: 100%;
+    }
+
+    .header-wrapper #entity-details>tr,
+    .header-wrapper #entity-details th {
+        font-weight: normal;
+        padding-left: 0.9rem;
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+    }
+
+    .header-wrapper #entity-details [data-element='entity-balance-due-label'],
+    .header-wrapper #entity-details [data-element='entity-balance-due'] {
+        background-color: #e6e6e6;
+    }
+
+    #client-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #product-table,
+    #delivery-note-table,
+    #task-table {
+        min-width: 100%;
+        table-layout: fixed;
+        overflow-wrap: break-word;
+        margin-top: 3rem;
+        /* margin-bottom: 200px; */
+    }
+
+    .task-duration {
+        display: block;
+        margin-top: 5px;
+        color: grey;
+    }
+
+    #product-table>thead,
+    #delivery-note-table>thead,
+    #task-table>thead {
+        text-align: left;
+    }
+
+    #product-table>thead>tr>th,
+    #delivery-note-table>thead>tr>th,
+    #task-table>thead>tr>th {
+        padding: 1rem;
+        background-color: #e6e6e6;
+    }
+
+    #product-table>thead>tr>th:last-child,
+    #delivery-note-table>thead>tr>th:last-child,
+    #task-table>thead>tr>th:last-child {
+        text-align: right;
+    }
+
+    #product-table>tbody>tr>td,
+    #delivery-note-table>tbody>tr>td,
+    #task-table>tbody>tr>td {
+        border-bottom: 1px solid #e6e6e6;
+        padding: 1rem;
+    }
+
+    #product-table>tbody>tr>td:last-child,
+    #delivery-note-table>tbody>tr>td:last-child,
+    #task-table>tbody>tr>td:last-child {
+        text-align: right;
+    }
+
+    #table-totals {
+        page-break-inside: avoid;
+    }
+
+    #table-totals>* {
+        display: grid;
+        grid-template-columns: 3fr 1fr 1fr;
+        padding-top: .5rem;
+        padding-left: 1rem;
+        gap: 20px;
+    }
+
+    #table-totals>* [data-element='total-table-balance-due-label'],
+    #table-totals>* [data-element='total-table-balance-due'] {
+        font-weight: bold;
+    }
+
+    #table-totals>*> :last-child {
+        text-align: right;
+        padding-right: 1rem;
+    }
+</style>
+<div id="header"></div>
+
+<div id="body">
+    <div class="header-wrapper">
+        <p>Invoice Ninja</p>
+
+        <div id="company-address">
+            <p>My address 1</p>
+            <p>Address line 2</p>
+        </div>
+
+        <div>
+            <img
+                    class="company-logo"
+                    src="https://www.php.net/images/logos/new-php-logo.png"
+                    alt="$company.name logo"
+            />
+
+            <table id="entity-details" cellspacing="0">
+                <tr>
+                    <td>Invoice number</td>
+                    <td>1000</td>
+                </tr>
+                <tr>
+                    <td>Due date</td>
+                    <td>xxx-xxx-xx</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="client-details">
+        <p>My address 1</p>
+        <p>Address line 2</p>
+    </div>
+
+    <table id="product-table" cellspacing="0">
+        <thead>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Line total</th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>My awesome PDF maker</td>
+            <td>1</td>
+            <td>$10000</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table id="task-table" cellspacing="0"></table>
+
+    <div id="table-totals" cellspacing="0"></div>
+
+    <table id="delivery-note-table" cellspacing="0"></table>
+</div>
+
+<div id="footer"></div>

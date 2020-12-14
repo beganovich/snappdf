@@ -11,14 +11,14 @@ class ChromiumPdfTest extends TestCase
     public function testGeneratingPdfWorks()
     {
         $path = '/usr/bin/google-chrome';
-        $url = 'http://invoiceninja.com';
         $outputPath = dirname(__DIR__, 1) . '/example.pdf';
 
         $chromiumPdf = new ChromiumPdf();
+        $html = file_get_contents(dirname(__DIR__, 1) . '/template.html');
 
         $chromiumPdf
             ->setChromiumPath($path)
-            ->setUrl($url)
+            ->setHtml($html)
             ->setOutputPath($outputPath)
             ->generate();
 
