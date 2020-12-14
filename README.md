@@ -25,7 +25,7 @@ $chromiumPdf
 ```
 
 ### Requirements
-- PHP ^7.3
+- PHP ^7.3|^7.4|^8.0
 - exec()
 - Functional Google Chrome and/or Chromium.
 
