@@ -3,7 +3,6 @@
 namespace Test\ChromiumPdf;
 
 use Beganovich\ChromiumPdf\ChromiumPdf;
-use Beganovich\ChromiumPdf\Exception\GeneratingPdfWasUnsuccessful;
 use PHPUnit\Framework\TestCase;
 
 class ChromiumPdfTest extends TestCase
@@ -14,7 +13,7 @@ class ChromiumPdfTest extends TestCase
         $outputPath = dirname(__DIR__, 1) . '/example.pdf';
 
         $chromiumPdf = new ChromiumPdf();
-        $html = file_get_contents(dirname(__DIR__, 1) . '/template.html');
+        $html = file_get_contents(dirname(__DIR__, 1) . '/tests/template.html');
 
         $chromiumPdf
             ->setChromiumPath($path)
