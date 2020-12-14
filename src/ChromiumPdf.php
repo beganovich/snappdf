@@ -18,11 +18,6 @@ class ChromiumPdf
     /**
      * @var string
      */
-    private $outputPath;
-
-    /**
-     * @var string
-     */
     private $html;
 
     public function __construct()
@@ -45,30 +40,6 @@ class ChromiumPdf
     public function setUrl(string $url): self
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @param bool $withPrintToPdf
-     * @return string
-     */
-    public function getOutputPath(bool $withPrintToPdf = false): string
-    {
-        if ($withPrintToPdf) {
-            return sprintf('--print-to-pdf="%s"', $this->outputPath);
-        }
-
-        return $this->outputPath;
-    }
-
-    /**
-     * @param string $outputPath
-     * @return ChromiumPdf
-     */
-    public function setOutputPath(string $outputPath): self
-    {
-        $this->outputPath = $outputPath;
 
         return $this;
     }
@@ -114,9 +85,9 @@ class ChromiumPdf
     /**
      * Main method to generate PDFs.
      *
-     * @return void
+     * @return string
      */
-    public function generate(): void
+    public function generate()
     {
         $content = [
             'type' => null,
@@ -129,7 +100,7 @@ class ChromiumPdf
         }
 
         if ($this->getHtml()) {
-            $temporaryFile = tempnam(sys_get_temp_dir(), "Pre_");
+            $temporaryFile = tempnam(sys_get_temp_dir(), 'html_');
             rename($temporaryFile, $temporaryFile .= '.html');
             file_put_contents($temporaryFile, $this->getHtml());
 
@@ -141,15 +112,16 @@ class ChromiumPdf
             throw new \Exception('No source provided. Make sure you call setHtml() or setUrl() before generate().');
         }
 
+        $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
+        rename($pdf, $pdf .= '.pdf');
+
         $command = sprintf(
-            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins %s',
-            $this->getChromiumPath(), $this->getOutputPath(), $content['content']
+            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins %s > /dev/null 2>&1',
+            $this->getChromiumPath(), $pdf, $content['content']
         );
 
         exec($command, $output, $resultCode);
 
-        if ($content['type'] == 'html') {
-            unlink($temporaryFile);
-        }
+        return $pdf;
     }
 }
