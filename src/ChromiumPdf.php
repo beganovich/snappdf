@@ -122,6 +122,6 @@ class ChromiumPdf
 
         exec($command, $output, $resultCode);
 
-        return $pdf;
+        return file_get_contents($pdf);
     }
 }

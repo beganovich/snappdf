@@ -8,7 +8,6 @@ $chromiumPdf = new \Beganovich\ChromiumPdf\ChromiumPdf();
 $chromiumPdf
     ->setChromiumPath('/usr/bin/google-chrome')
     ->setHtml('<h1>Hello world!</h1>')
-    ->setOutputPath('/output/path/to/example.pdf')
     ->generate();
 ```
 
@@ -20,7 +19,6 @@ $chromiumPdf = new \Beganovich\ChromiumPdf\ChromiumPdf();
 $chromiumPdf
     ->setChromiumPath('/usr/bin/google-chrome')
     ->setUrl('https://invoiceninja.com')
-    ->setOutputPath('/output/path/to/example.pdf')
     ->generate();
 ```
 
@@ -28,6 +26,10 @@ $chromiumPdf
 - PHP ^7.3|^7.4|^8.0
 - exec()
 - Functional Google Chrome and/or Chromium.
+- Linux or macOS
+
+Windows isn't supported at the moment. In theory, it should work on WSL2, but it wasn't tested.
+Stable release should include Windows support as well.
 
 ### Installation
 Composer is required way of installing library:

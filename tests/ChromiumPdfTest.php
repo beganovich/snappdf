@@ -19,6 +19,6 @@ class ChromiumPdfTest extends TestCase
             ->setHtml($html)
             ->generate();
 
-        $this->assertTrue(file_exists($pdf));
+        $this->assertNotNull($pdf);
     }
 }
