@@ -116,7 +116,7 @@ class ChromiumPdf
         rename($pdf, $pdf .= '.pdf');
 
         $command = sprintf(
-            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins %s > /dev/null 2>&1',
+            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins --no-sandbox %s > /dev/null 2>&1',
             $this->getChromiumPath(), $pdf, $content['content']
         );
 
