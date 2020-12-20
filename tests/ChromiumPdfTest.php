@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ChromiumPdfTest extends TestCase
 {
-    static $chromiumPath = '/usr/bin/google-chrome';
+    public static $chromiumPath = '/usr/bin/google-chrome';
 
     public function testGeneratingPdfWorks()
     {

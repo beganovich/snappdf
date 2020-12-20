@@ -121,7 +121,9 @@ class ChromiumPdf
 
         $command = sprintf(
             '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins --no-sandbox %s',
-            $this->getChromiumPath(), $pdf, $content['content']
+            $this->getChromiumPath(),
+            $pdf,
+            $content['content']
         );
 
         $process = Process::fromShellCommandline($command);
