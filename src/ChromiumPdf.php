@@ -2,7 +2,8 @@
 
 namespace Beganovich\ChromiumPdf;
 
-use Beganovich\ChromiumPdf\Exceptions\MissingContent;
+use Beganovich\ChromiumPdf\Exception\BinaryNotFound;
+use Beganovich\ChromiumPdf\Exception\MissingContent;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -49,10 +50,21 @@ class ChromiumPdf
 
     /**
      * @return string
+     * @throws BinaryNotFound
      */
     public function getChromiumPath(): string
     {
-        return $this->chromiumPath;
+        if ($this->chromiumPath) {
+            return $this->chromiumPath;
+        }
+
+        $builtInChromium = dirname(__FILE__, 2) . '/versions/chrome';
+
+        if (file_exists($builtInChromium) && is_executable($builtInChromium)) {
+            return $builtInChromium;
+        }
+
+        throw new BinaryNotFound('Browser binary not found. Make sure you download it or set using setChromiumPath().');
     }
 
     /**

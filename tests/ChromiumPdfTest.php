@@ -3,7 +3,7 @@
 namespace Test\ChromiumPdf;
 
 use Beganovich\ChromiumPdf\ChromiumPdf;
-use Beganovich\ChromiumPdf\Exceptions\MissingContent;
+use Beganovich\ChromiumPdf\Exception\MissingContent;
 use PHPUnit\Framework\TestCase;
 
 class ChromiumPdfTest extends TestCase
@@ -33,5 +33,23 @@ class ChromiumPdfTest extends TestCase
         $chromiumPdf
             ->setChromiumPath(self::$chromiumPath)
             ->generate();
+    }
+
+    public function testBuiltInChromiumShouldBeUsed()
+    {
+        $chromiumPdf = new ChromiumPdf();
+
+        $this->assertEquals(dirname(__FILE__, 2) . '/versions/chrome', $chromiumPdf->getChromiumPath());
+    }
+
+    public function testUsingBuiltInChromium()
+    {
+        $chromiumPdf = new ChromiumPdf();
+
+        $pdf = $chromiumPdf
+            ->setHtml('<h1>Hello world!</h1>')
+            ->generate();
+
+        $this->assertNotNull($pdf);
     }
 }

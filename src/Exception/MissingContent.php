@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Beganovich\ChromiumPdf\Exceptions;
+namespace Beganovich\ChromiumPdf\Exception;
 
 use Exception;
 

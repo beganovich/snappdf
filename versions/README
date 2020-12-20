@@ -1,0 +1,4 @@
+This is where versions/revisions of Chromium will be stored.
+
+Main executable will be symlinked here as {chromium-pdf}/versions/chrome & it will be used
+if setChromiumPath() is not called.
