@@ -2,6 +2,9 @@
 
 namespace Beganovich\ChromiumPdf;
 
+use Beganovich\ChromiumPdf\Exceptions\MissingContent;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class ChromiumPdf
 {
@@ -86,6 +89,7 @@ class ChromiumPdf
      * Main method to generate PDFs.
      *
      * @return string
+     * @throws MissingContent
      */
     public function generate()
     {
@@ -109,18 +113,23 @@ class ChromiumPdf
         }
 
         if (!$content['content']) {
-            throw new \Exception('No source provided. Make sure you call setHtml() or setUrl() before generate().');
+            throw new MissingContent('No content provided. Make sure you call setHtml() or setUrl() before generate().');
         }
 
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
         $command = sprintf(
-            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins --no-sandbox %s > /dev/null 2>&1',
+            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins --no-sandbox %s',
             $this->getChromiumPath(), $pdf, $content['content']
         );
 
-        exec($command, $output, $resultCode);
+        $process = Process::fromShellCommandline($command);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         return file_get_contents($pdf);
     }
