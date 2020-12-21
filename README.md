@@ -42,6 +42,12 @@ $pdf = $snappdf
     ->generate();
 ```
 
+If none of previously listed option fits your needs, you can also set path to executable Chromium with environment variable.
+```bash
+SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
+```
+
+Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
 ### Possible runtime exceptions:
 **Symfony\Component\Process\Exception\ProcessFailedException**
 - When generating PDF was unsuccessful.
