@@ -58,6 +58,10 @@ class Snappdf
             return $this->chromiumPath;
         }
 
+        if (getenv('SNAPPDF_EXECUTABLE_PATH')) {
+            return getenv('SNAPPDF_EXECUTABLE_PATH');
+        }
+
         $builtInChromium = dirname(__FILE__, 2) . '/versions/chrome';
 
         if (file_exists($builtInChromium) && is_executable($builtInChromium)) {
