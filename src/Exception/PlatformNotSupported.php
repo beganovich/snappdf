@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Beganovich\ChromiumPdf\Exception;
+namespace Beganovich\Snappdf\Exception;
 
 use Exception;
 

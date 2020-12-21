@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Beganovich\ChromiumPdf\Command;
+namespace Beganovich\Snappdf\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,6 +29,8 @@ class UpdateActiveBinary extends Command
         $filesystem->symlink(dirname(__FILE__, 3) . "/versions/{$input->getArgument('revision')}/chrome-linux/chrome", 'versions/chrome');
 
         chmod(dirname(__FILE__, 3) . '/versions/chrome', 0755);
+
+        $filesystem->remove(dirname(__FILE__, 3) . "/versions/{$input->getArgument('revision')}.zip");
 
         return Command::SUCCESS;
     }

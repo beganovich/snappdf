@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Beganovich\ChromiumPdf\Command;
+namespace Beganovich\Snappdf\Command;
 
-use Beganovich\ChromiumPdf\Exception\PlatformNotSupported;
+use Beganovich\Snappdf\Exception\PlatformNotSupported;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,14 +74,6 @@ class DownloadChromiumCommand extends Command
     {
         if (PHP_OS == 'Linux') {
             return 'Linux_x64';
-        }
-
-        if (PHP_OS == 'Windows' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT') {
-            return 'Win_x64';
-        }
-
-        if (PHP_OS == 'Darwin') {
-            return 'Mac';
         }
 
         throw new PlatformNotSupported('Platform not supported.');

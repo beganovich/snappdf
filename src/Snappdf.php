@@ -1,13 +1,13 @@
 <?php
 
-namespace Beganovich\ChromiumPdf;
+namespace Beganovich\Snappdf;
 
-use Beganovich\ChromiumPdf\Exception\BinaryNotFound;
-use Beganovich\ChromiumPdf\Exception\MissingContent;
+use Beganovich\Snappdf\Exception\BinaryNotFound;
+use Beganovich\Snappdf\Exception\MissingContent;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class ChromiumPdf
+class Snappdf
 {
     /**
      * @var string
@@ -39,7 +39,7 @@ class ChromiumPdf
 
     /**
      * @param string $url
-     * @return ChromiumPdf
+     * @return Snappdf
      */
     public function setUrl(string $url): self
     {
@@ -69,7 +69,7 @@ class ChromiumPdf
 
     /**
      * @param string $chromiumPath
-     * @return ChromiumPdf
+     * @return Snappdf
      */
     public function setChromiumPath(string $chromiumPath): self
     {
@@ -88,7 +88,7 @@ class ChromiumPdf
 
     /**
      * @param string $html
-     * @return ChromiumPdf
+     * @return Snappdf
      */
     public function setHtml(string $html): self
     {

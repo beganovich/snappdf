@@ -1,6 +1,6 @@
 {
-    "name": "beganovich/chromium-pdf",
-    "description": "Generate PDFs using headless Chromium",
+    "name": "beganovich/snappdf",
+    "description": "Convert webpages or HTML into the PDF file using Chromium or Google Chrome.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -11,12 +11,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Beganovich\\ChromiumPdf\\": "src/"
+            "Beganovich\\Snappdf\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Test\\ChromiumPdf\\": "tests/"
+            "Test\\Snappdf\\": "tests/"
         }
     },
     "require": {

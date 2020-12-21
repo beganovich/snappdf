@@ -3,11 +3,11 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Beganovich\ChromiumPdf\Command\DownloadChromiumCommand;
-use Beganovich\ChromiumPdf\Command\UpdateActiveBinary;
+use Beganovich\Snappdf\Command\DownloadChromiumCommand;
+use Beganovich\Snappdf\Command\UpdateActiveBinary;
 use Symfony\Component\Console\Application;
 
-$application = new Application('ChromiumPdf');
+$application = new Application('Snappdf');
 
 $application->add(new DownloadChromiumCommand());
 $application->add(new UpdateActiveBinary());

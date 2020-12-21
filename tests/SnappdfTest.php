@@ -1,21 +1,21 @@
 <?php
 
-namespace Test\ChromiumPdf;
+namespace Test\Snappdf;
 
-use Beganovich\ChromiumPdf\ChromiumPdf;
-use Beganovich\ChromiumPdf\Exception\MissingContent;
+use Beganovich\Snappdf\Exception\MissingContent;
+use Beganovich\Snappdf\Snappdf;
 use PHPUnit\Framework\TestCase;
 
-class ChromiumPdfTest extends TestCase
+class SnappdfTest extends TestCase
 {
     public static $chromiumPath = '/usr/bin/google-chrome';
 
     public function testGeneratingPdfWorks()
     {
-        $chromiumPdf = new ChromiumPdf();
-        $html = file_get_contents(dirname(__DIR__, 1) . '/tests/template.html');
+        $snappdf = new Snappdf();
+        $html = '<h1>Hello world</h1>';
 
-        $pdf = $chromiumPdf
+        $pdf = $snappdf
             ->setChromiumPath(self::$chromiumPath)
             ->setHtml($html)
             ->generate();
@@ -28,33 +28,25 @@ class ChromiumPdfTest extends TestCase
         $this->expectException(MissingContent::class);
         $this->expectExceptionMessage('No content provided. Make sure you call setHtml() or setUrl() before generate().');
 
-        $chromiumPdf = new ChromiumPdf();
+        $snappdf = new Snappdf();
 
-        $chromiumPdf
+        $snappdf
             ->setChromiumPath(self::$chromiumPath)
             ->generate();
     }
 
     public function testBuiltInChromiumShouldBeUsed()
     {
-        if (!file_exists(dirname(__FILE__, 2) . '/versions/chrome')) {
-            return $this->assertTrue(true);
-        }
-        
-        $chromiumPdf = new ChromiumPdf();
+        $chromiumPdf = new Snappdf();
 
         $this->assertEquals(dirname(__FILE__, 2) . '/versions/chrome', $chromiumPdf->getChromiumPath());
     }
 
     public function testUsingBuiltInChromium()
     {
-        if (!file_exists(dirname(__FILE__, 2) . '/versions/chrome')) {
-            return $this->assertTrue(true);
-        }
+        $snappdf = new Snappdf();
 
-        $chromiumPdf = new ChromiumPdf();
-
-        $pdf = $chromiumPdf
+        $pdf = $snappdf
             ->setHtml('<h1>Hello world!</h1>')
             ->generate();
 
