@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/beganovich/snappdf/master/art/cover.png" alt="snappdf logo">
+    <img src="https://raw.githubusercontent.com/beganovich/snappdf/master/cover.png" alt="snappdf logo">
 </p>
 
 # snappdf
