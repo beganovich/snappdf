@@ -1,7 +1,20 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+declare(strict_types=1);
+
+$possibleAutoloadPaths = [
+    __DIR__ . '/../../autoload.php',
+    __DIR__ . '/../autoload.php',
+    __DIR__ . '/vendor/autoload.php',
+];
+
+foreach ($possibleAutoloadPaths as $possibleAutoloadPath) {
+    if (file_exists($possibleAutoloadPath)) {
+        require_once $possibleAutoloadPath;
+        break;
+    }
+}
 
 use Beganovich\Snappdf\Command\DownloadChromiumCommand;
 use Beganovich\Snappdf\Command\UpdateActiveBinary;
