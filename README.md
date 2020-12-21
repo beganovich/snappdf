@@ -61,7 +61,7 @@ Package has been tested & developed for **Linux**.
 For Windows or Mac you have to use `setChromiumPath()` to provide executable variable path.
 
 ## Installation
-Composer is required way of installing library:
+Composer is recommended way of installing library:
 
 ```bash
 composer require beganovich/snappdf
