@@ -94,7 +94,7 @@ Also, snappdf doesn't need Node installed to operate.
 ## Credits
 - [David Bomba](https://github.com/turbo124)
 - [Benjamin Beganović](https://github.com/beganovich)
-- [All contributors](https://github.com/beganovich/chromium-pdf/contributors)
+- [All contributors](https://github.com/beganovich/snappdf/contributors)
 
 ## Licence
 The MIT License (MIT).
