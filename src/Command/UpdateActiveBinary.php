@@ -26,7 +26,10 @@ class UpdateActiveBinary extends Command
 
         $output->writeln("versions/{$input->getArgument('revision')}");
 
-        $filesystem->symlink(dirname(__FILE__, 3) . "/versions/{$input->getArgument('revision')}/chrome-linux/chrome", 'versions/chrome');
+        $filesystem->symlink(
+            dirname(__FILE__, 3) . "/versions/{$input->getArgument('revision')}/chrome-linux/chrome", 
+            dirname(__FILE__, 3) . '/versions/chrome'
+        );
 
         chmod(dirname(__FILE__, 3) . '/versions/chrome', 0755);
 

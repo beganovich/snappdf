@@ -33,14 +33,14 @@ class DownloadChromiumCommand extends Command
 
         $platformRevision = "{$latestVersion}-{$this->generatePlatformCode()}";
 
-        if (!file_exists("versions/{$platformRevision}.zip")) {
+        if (!file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip")) {
             file_put_contents(
-                "versions/{$platformRevision}.zip",
+                dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip",
                 fopen("https://download-chromium.appspot.com/dl/{$this->generatePlatformCode()}?type=snapshots", 'r')
             );
         }
 
-        if (file_exists("versions/{$platformRevision}/chrome-linux/chrome")) {
+        if (file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}/chrome-linux/chrome")) {
             $output->writeln('Latest version already downloaded & extracted.');
 
             return Command::SUCCESS;
@@ -50,10 +50,10 @@ class DownloadChromiumCommand extends Command
 
         $archive = new ZipArchive();
 
-        if ($archive->open("versions/{$platformRevision}.zip")) {
-            mkdir("versions/{$platformRevision}");
+        if ($archive->open(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip")) {
+            mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
 
-            $archive->extractTo("versions/{$platformRevision}");
+            $archive->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
             $archive->close();
         }
 
