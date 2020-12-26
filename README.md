@@ -49,7 +49,7 @@ SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
 
 Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
 ### Possible runtime exceptions:
-**Symfony\Component\Process\Exception\ProcessFailedException**
+**Beganovich\Snappdf\Exception\ProcessFailedException**
 - When generating PDF was unsuccessful.
   
 **Beganovich\Snappdf\Exception\BinaryNotFound**:
@@ -60,11 +60,6 @@ Note: `setChromiumPath` has highest priority. Second one is environment variable
 
 ## Requirements
 - PHP 7.3+
-
-## Supported platforms
-Package has been tested & developed for **Linux**.
-
-For Windows or Mac you have to use `setChromiumPath()` to provide executable variable path.
 
 ## Installation
 Composer is recommended way of installing library:

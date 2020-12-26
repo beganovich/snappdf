@@ -6,7 +6,7 @@ use Beganovich\Snappdf\Command\DownloadChromiumCommand;
 use Beganovich\Snappdf\Exception\BinaryNotExecutable;
 use Beganovich\Snappdf\Exception\BinaryNotFound;
 use Beganovich\Snappdf\Exception\MissingContent;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Beganovich\Snappdf\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class Snappdf
@@ -108,15 +108,16 @@ class Snappdf
 
     /**
      * Main method to generate PDFs.
-     * 
-     * @throws \Beganovich\Snappdf\Exception\MissingContent 
-     * @throws \Beganovich\Snappdf\Exception\BinaryNotFound 
-     * @throws \Symfony\Component\Process\Exception\RuntimeException 
-     * @throws \Symfony\Component\Process\Exception\ProcessTimedOutException 
-     * @throws \Symfony\Component\Process\Exception\ProcessSignaledException 
-     * @throws \Symfony\Component\Process\Exception\LogicException 
-     * @throws \Symfony\Component\Process\Exception\ProcessFailedException 
-     * @return null|string 
+     *
+     * @return null|string
+     * @throws \Beganovich\Snappdf\Exception\MissingContent
+     * @throws \Beganovich\Snappdf\Exception\BinaryNotFound
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
+     * @throws \Beganovich\Snappdf\Exception\ProcessFailedException
+     * @throws \Symfony\Component\Process\Exception\RuntimeException
+     * @throws \Symfony\Component\Process\Exception\ProcessTimedOutException
+     * @throws \Symfony\Component\Process\Exception\ProcessSignaledException
+     * @throws \Symfony\Component\Process\Exception\LogicException
      */
     public function generate(): ?string
     {
@@ -146,7 +147,7 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
-        $process = new Process([
+        $commandInput = [
             $this->getChromiumPath(),
             '--headless',
             '--disable-gpu',
@@ -166,12 +167,33 @@ class Snappdf
             '--hide-scrollbars',
             '--print-to-pdf=' . $pdf,
             $content['content'],
-        ]);
+        ];
+
+        $platform = (new DownloadChromiumCommand())->generatePlatformCode();
+
+        if ($platform == 'Win' || $platform == 'Win_x64') {
+            return $this->executeOnWindows($commandInput, $pdf);
+        }
+
+        $process = new Process($commandInput);
 
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+            throw new ProcessFailedException($process->getOutput());
+        }
+
+        return file_get_contents($pdf);
+    }
+
+    private function executeOnWindows(array $commands, $pdf)
+    {
+        $command = implode(' ', $commands);
+
+        exec($command, $output, $statusCode);
+
+        if (!$statusCode) {
+            throw new ProcessFailedException($output);
         }
 
         return file_get_contents($pdf);
