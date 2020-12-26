@@ -17,12 +17,10 @@ foreach ($possibleAutoloadPaths as $possibleAutoloadPath) {
 }
 
 use Beganovich\Snappdf\Command\DownloadChromiumCommand;
-use Beganovich\Snappdf\Command\UpdateActiveBinary;
 use Symfony\Component\Console\Application;
 
 $application = new Application('Snappdf');
 
 $application->add(new DownloadChromiumCommand());
-$application->add(new UpdateActiveBinary());
 
 $application->run();
