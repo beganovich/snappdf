@@ -2,6 +2,8 @@
 
 namespace Beganovich\Snappdf;
 
+use Beganovich\Snappdf\Command\DownloadChromiumCommand;
+use Beganovich\Snappdf\Exception\BinaryNotExecutable;
 use Beganovich\Snappdf\Exception\BinaryNotFound;
 use Beganovich\Snappdf\Exception\MissingContent;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -23,11 +25,6 @@ class Snappdf
      * @var string
      */
     private $html;
-
-    public function __construct()
-    {
-        // ..
-    }
 
     /**
      * @return string
@@ -62,10 +59,18 @@ class Snappdf
             return getenv('SNAPPDF_EXECUTABLE_PATH');
         }
 
-        $builtInChromium = dirname(__FILE__, 2) . '/versions/chrome';
+        $latestRevisionFile = dirname(__FILE__, 2) . '/versions/revision.txt';
 
-        if (file_exists($builtInChromium) && is_executable($builtInChromium)) {
-            return $builtInChromium;
+        if (file_exists($latestRevisionFile)) {
+            $chromuimBinary = (new DownloadChromiumCommand())->generatePlatformExecutable(
+                file_get_contents($latestRevisionFile)
+            );
+
+            if (!is_executable($chromuimBinary)) {
+                throw new BinaryNotExecutable('Downloaded Chromium binary is not executable. Make sure to set correct permissions (0755)');
+            }
+
+            return $chromuimBinary;
         }
 
         throw new BinaryNotFound('Browser binary not found. Make sure you download it or set using setChromiumPath().');
@@ -103,11 +108,17 @@ class Snappdf
 
     /**
      * Main method to generate PDFs.
-     *
-     * @return string
-     * @throws MissingContent
+     * 
+     * @throws \Beganovich\Snappdf\Exception\MissingContent 
+     * @throws \Beganovich\Snappdf\Exception\BinaryNotFound 
+     * @throws \Symfony\Component\Process\Exception\RuntimeException 
+     * @throws \Symfony\Component\Process\Exception\ProcessTimedOutException 
+     * @throws \Symfony\Component\Process\Exception\ProcessSignaledException 
+     * @throws \Symfony\Component\Process\Exception\LogicException 
+     * @throws \Symfony\Component\Process\Exception\ProcessFailedException 
+     * @return null|string 
      */
-    public function generate()
+    public function generate(): ?string
     {
         $content = [
             'type' => null,
