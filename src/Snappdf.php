@@ -135,14 +135,28 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
-        $command = sprintf(
-            '%s --headless --disable-gpu --print-to-pdf="%s" --print-to-pdf-no-header --hide-scrollbars --no-margins --no-sandbox %s',
+        $process = new Process([
             $this->getChromiumPath(),
-            $pdf,
-            $content['content']
-        );
+            '--headless',
+            '--disable-gpu',
+            '--disable-translate',
+            '--disable-extensions',
+            '--disable-sync',
+            '--disable-background-networking',
+            '--disable-software-rasterizer',
+            '--disable-default-apps',
+            '--disable-dev-shm-usage',
+            '--safebrowsing-disable-auto-update',
+            '--run-all-compositor-stages-before-draw',
+            '--no-first-run',
+            '--no-margins',
+            '--no-sandbox',
+            '--print-to-pdf-no-header',
+            '--hide-scrollbars',
+            '--print-to-pdf=' . $pdf,
+            $content['content'],
+        ]);
 
-        $process = Process::fromShellCommandline($command);
         $process->run();
 
         if (!$process->isSuccessful()) {
