@@ -39,7 +39,15 @@ class SnappdfTest extends TestCase
     {
         $chromiumPdf = new Snappdf();
 
-        $this->assertEquals(dirname(__FILE__, 2) . '/versions/chrome', $chromiumPdf->getChromiumPath());
+        $latestRevision = dirname(__FILE__, 2) . '/versions/revision.txt';
+
+        if (!file_exists($latestRevision)) {
+            $this->markTestSkipped('No Chromium binary found.');
+        }
+
+        $latestRevision = file_get_contents($latestRevision);
+
+        $this->assertEquals(dirname(__FILE__, 2) . "/versions/{$latestRevision}/chrome-linux/chrome", $chromiumPdf->getChromiumPath());
     }
 
     public function testUsingBuiltInChromium()
