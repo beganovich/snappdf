@@ -5,22 +5,48 @@ namespace Beganovich\Snappdf\Command;
 
 use Beganovich\Snappdf\Exception\PlatformNotSupported;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
 
 class DownloadChromiumCommand extends Command
 {
+    /**
+     * Command signature.
+     * 
+     * @var string
+     */
     protected static $defaultName = 'download';
 
+    /**
+     * Download link for revisions.
+     * 
+     * @var string
+     */
     public $revisionUrl = 'https://download-chromium.appspot.com/rev/%s?type=snapshots';
 
-    protected function configure()
+    /**
+     * Configure command properties.
+     * 
+     * @return void 
+     */
+    protected function configure(): void
     {
         $this->setDescription('Downloads a latest version of Chromium');
     }
 
+    /**
+     * The main command execute method.
+     * 
+     * @param \Symfony\Component\Console\Input\InputInterface $input 
+     * @param \Symfony\Component\Console\Output\OutputInterface $output 
+     * 
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported 
+     * @throws \Throwable 
+     * @throws \Symfony\Component\Filesystem\Exception\IOException 
+     * @return int 
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $response = json_decode(
@@ -33,17 +59,11 @@ class DownloadChromiumCommand extends Command
 
         $platformRevision = "{$latestVersion}-{$this->generatePlatformCode()}";
 
-        if (!file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip")) {
+        if (!file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}")) {
             file_put_contents(
                 dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip",
                 fopen("https://download-chromium.appspot.com/dl/{$this->generatePlatformCode()}?type=snapshots", 'r')
             );
-        }
-
-        if (file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}/chrome-linux/chrome")) {
-            $output->writeln('Latest version already downloaded & extracted.');
-
-            return Command::SUCCESS;
         }
 
         $output->writeln('Download completed. Extracting the zip archive.');
@@ -59,34 +79,63 @@ class DownloadChromiumCommand extends Command
 
         $output->writeln("Archive extracted. Creating symlink for {$platformRevision}");
 
-        $this->markAsActiveBinary($platformRevision, $output);
+        file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
+
+        chmod($this->generatePlatformExecutable($platformRevision), 0755);
+
+        (new Filesystem())->remove(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip");
 
         $output->writeln("Completed! {$platformRevision} currently in use.");
 
         return Command::SUCCESS;
     }
 
-
     /**
-     * @throws PlatformNotSupported
+     * Generate transformed platform codename for "appspot.com" download.
+     * 
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported 
+     * @return string 
      */
-    private function generatePlatformCode(): string
+    public function generatePlatformCode(): string
     {
         if (PHP_OS == 'Linux') {
             return 'Linux_x64';
         }
 
-        throw new PlatformNotSupported('Platform not supported.');
+        if (PHP_OS == 'Darwin') {
+            return 'Mac';
+        }
+
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            return PHP_INT_SIZE == 4 ? 'Win' : 'Win_x64';
+        }
+
+        throw new PlatformNotSupported('Platform ' . PHP_OS . ' is not supported.');
     }
 
-    private function markAsActiveBinary(string $revision, OutputInterface $output)
+    /**
+     * Generate platform executable path based on generatePlatformCode().
+     * 
+     * @param string $revision 
+     * @param int $level
+     *  
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported 
+     * @return null|string 
+     */
+    public function generatePlatformExecutable(string $revision, int $level = 3): ?string
     {
-        $command = $this->getApplication()->find('use');
+        $platform = $this->generatePlatformCode();
 
-        $arguments = [
-            'revision' => $revision,
-        ];
+        if ($platform == 'Linux_x64') {
+            return dirname(__FILE__, $level) . "/versions/{$revision}/chrome-linux/chrome";
+        }
 
-        $command->run(new ArrayInput($arguments), $output);
+        if ($platform == 'Mac') {
+            return dirname(__FILE__, $level) . "/versions/{$revision}/chrome-mac/Chromium.app";
+        }
+
+        if ($platform == 'Win' || $platform == 'Win_x64') {
+            return dirname(__FILE__, $level) . "/versions/{$revision}/chrome-win/chrome.exe";
+        }
     }
 }
