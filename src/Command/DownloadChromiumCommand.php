@@ -49,6 +49,12 @@ class DownloadChromiumCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (getenv('SNAPPDF_SKIP_DOWNLOAD') == 'true') {
+            $output->writeln('SNAPPDF_SKIP_DOWNLOAD variable found. Skipping the download.');
+
+            return Command::SUCCESS;
+        }
+
         $response = json_decode(
             file_get_contents(sprintf($this->revisionUrl, $this->generatePlatformCode()))
         );

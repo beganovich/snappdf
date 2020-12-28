@@ -81,6 +81,9 @@ Local revision will be used **only** when you don't provide path using `setChrom
 
 **Note:** snappdf will download & use latest build of Chromium. Since Chromium itself doesn't have stable or unstable release, browser itself can be buggy or possibly broken. We don't take any responsibility for that. **If security & stability is your top priority, please install Google Chrome stable version & point package to use that.** 
 
+### Skip the Chromium download
+If you need to dynamically skip the download, make use of `SNAPPDF_SKIP_DOWNLOAD` environment variable.
+
 ### Comparison to Browsershot:
 In case you need much more complex software to perform operations with headless browser go for [Spatie's Browsershot](https://github.com/spatie/browsershot). It's fantastic package.
 Purpose of snappdf is to be really minimal & only focus on making PDFs.
