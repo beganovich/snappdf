@@ -83,7 +83,7 @@ class DownloadChromiumCommand extends Command
             $archive->close();
         }
 
-        $output->writeln("Archive extracted. Creating symlink for {$platformRevision}");
+        $output->writeln('Archive extracted.');
 
         file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
 
