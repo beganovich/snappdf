@@ -5,7 +5,17 @@
 # snappdf
 This is a simple library that lets you convert webpages or HTML into the PDF file using Chromium or Google Chrome.
 
-## Usage:
+- [snappdf](#snappdf)
+  * [Usage](#usage)
+  * [Requirements](#requirements)
+  * [Installation](#installation)
+    + [Downloading local Chromium](#downloading-local-chromium)
+    + [Skip the Chromium download](#skip-the-chromium-download)
+    + [Comparison to Browsershot](#comparison-to-browsershot)
+  * [Credits](#credits)
+  * [Licence](#licence)
+
+## Usage
 
 Here's quick example, how it works:
 
@@ -86,7 +96,7 @@ Local revision will be used **only** when you don't provide path using `setChrom
 ### Skip the Chromium download
 If you need to dynamically skip the download, make use of `SNAPPDF_SKIP_DOWNLOAD` environment variable.
 
-### Comparison to Browsershot:
+### Comparison to Browsershot
 In case you need much more complex software to perform operations with headless browser go for [Spatie's Browsershot](https://github.com/spatie/browsershot). It's fantastic package.
 Purpose of snappdf is to be really minimal & only focus on making PDFs.
 
