@@ -59,15 +59,6 @@ SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
 ```
 
 Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
-### Possible runtime exceptions:
-**Beganovich\Snappdf\Exception\ProcessFailedException**
-- When generating PDF was unsuccessful.
-  
-**Beganovich\Snappdf\Exception\BinaryNotFound**:
-- When no locally downloaded binary was found & setChromiumPath() isn't called.
-
-**Beganovich\Snappdf\Exception\MissingContent**
-- When no `setHtml` nor `setUrl` was called.
 
 ## Requirements
 - PHP 7.3+
