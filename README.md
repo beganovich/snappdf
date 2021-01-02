@@ -14,9 +14,7 @@ $snappdf = new \Beganovich\Snappdf\Snappdf();
 
 $pdf = $snappdf
     ->setHtml('<h1>Hello world!</h1>')
-    ->generate();
-
-file_put_contents('my-awesome.pdf', $pdf);
+    ->save('/path/to/your/file.pdf');
 ```
 
 In case you want to convert web page into the PDF, you can use `setUrl()` instead of `setHtml()`:
@@ -27,8 +25,6 @@ $snappdf = new \Beganovich\Snappdf\Snappdf();
 $pdf = $snappdf
     ->setUrl('https://github.com')
     ->save('/path/to/your/file.pdf');
-
-file_put_contents('my-awesome.pdf', $pdf);
 ```
 
 .. if you need specific version of Chrome, or don't want to use locally downloaded Chromium, make use of `setChromiumPath` method.
@@ -53,6 +49,7 @@ $pdf = $snappdf
     ->generate();
 
 file_put_contents('my.pdf', $pdf); // for local storage
+
 Storage::disk('s3')->put('my.pdf', $pdf); // for remote storage
 ```
 
