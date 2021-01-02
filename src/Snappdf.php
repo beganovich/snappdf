@@ -7,6 +7,7 @@ use Beganovich\Snappdf\Exception\BinaryNotExecutable;
 use Beganovich\Snappdf\Exception\BinaryNotFound;
 use Beganovich\Snappdf\Exception\MissingContent;
 use Beganovich\Snappdf\Exception\ProcessFailedException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 class Snappdf
@@ -186,7 +187,34 @@ class Snappdf
         return file_get_contents($pdf);
     }
 
-    private function executeOnWindows(array $commands, $pdf)
+    /**
+     * A proxy method to generate PDFs and save them.
+     *
+     * @param string $path
+     * @return void
+     * @throws BinaryNotFound
+     * @throws Exception\PlatformNotSupported
+     * @throws MissingContent
+     * @throws ProcessFailedException
+     */
+    public function save(string $path): void
+    {
+        $pdf = $this->generate();
+
+        $filesystem = new Filesystem();
+
+        $filesystem->appendToFile($path, $pdf);
+    }
+
+    /**
+     * On Windows, exec() is used instead of symfony/process component.
+     *
+     * @param array $commands
+     * @param $pdf
+     * @return string|null
+     * @throws ProcessFailedException
+     */
+    private function executeOnWindows(array $commands, $pdf): ?string
     {
         $command = implode(' ', $commands);
 

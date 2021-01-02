@@ -60,4 +60,19 @@ class SnappdfTest extends TestCase
 
         $this->assertNotNull($pdf);
     }
+
+    public function testSaveMethod()
+    {
+        $output = dirname(__FILE__, 2) . '/example.pdf';
+
+        $snappdf = new Snappdf();
+
+        $snappdf
+            ->setHtml('<h1>Hello world!</h1>')
+            ->save($output);
+
+        $this->assertEquals('application/pdf', mime_content_type($output));
+
+        unlink($output);
+    }
 }
