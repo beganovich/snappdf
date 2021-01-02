@@ -70,6 +70,31 @@ SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
 
 Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
 
+## Speed
+Main benefit and reason why this library exists is the speed of generating PDFs. It communicates directly with browser itself and it takes less than .5s to generate PDFs (with cold start). This was tested on mid-range laptop with i5-5300U and average SSD.
+
+```bash
+➜  snappdf git:(master) ./vendor/bin/phpunit --testdox --filter=testGeneratingPdfWorks
+PHPUnit 9.5.0 by Sebastian Bergmann and contributors.
+
+Snappdf (Test\Snappdf\Snappdf)
+ ✔ Generating pdf works
+
+Time: 00:00.199, Memory: 6.00 MB
+
+OK (1 test, 1 assertion)
+➜  snappdf git:(master) ./vendor/bin/phpunit --testdox --filter=testGeneratingPdfWorks
+PHPUnit 9.5.0 by Sebastian Bergmann and contributors.
+
+Snappdf (Test\Snappdf\Snappdf)
+ ✔ Generating pdf works
+
+Time: 00:00.171, Memory: 6.00 MB
+
+OK (1 test, 1 assertion)
+```
+
+
 ## Requirements
 - PHP 7.3+
 
