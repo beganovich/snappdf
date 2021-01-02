@@ -26,7 +26,7 @@ $snappdf = new \Beganovich\Snappdf\Snappdf();
 
 $pdf = $snappdf
     ->setUrl('https://github.com')
-    ->generate();
+    ->save('/path/to/your/file.pdf');
 
 file_put_contents('my-awesome.pdf', $pdf);
 ```
@@ -39,7 +39,21 @@ $snappdf = new \Beganovich\Snappdf\Snappdf();
 $pdf = $snappdf
     ->setUrl('https://github.com')
     ->setChromiumPath('/path/to/your/chrome')
+    ->save('/path/to/your/file.pdf');
+```
+
+If you need to generate PDF only, without saving it, make use of `generate()`:
+
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$pdf = $snappdf
+    ->setUrl('https://github.com')
+    ->setChromiumPath('/path/to/your/chrome')
     ->generate();
+
+file_put_contents('my.pdf', $pdf); // for local storage
+Storage::disk('s3')->put('my.pdf', $pdf); // for remote storage
 ```
 
 If none of previously listed option fits your needs, you can also set path to executable Chromium with environment variable.
