@@ -7,6 +7,7 @@ This is a simple library that lets you convert webpages or HTML into the PDF fil
 
 - [snappdf](#snappdf)
   * [Usage](#usage)
+  * [Speed](#speed)
   * [Requirements](#requirements)
   * [Installation](#installation)
     + [Downloading local Chromium](#downloading-local-chromium)
