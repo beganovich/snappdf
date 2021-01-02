@@ -29,7 +29,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^2.17"
+        "friendsofphp/php-cs-fixer": "^2.17",
+        "ext-fileinfo": "*"
     },
     "bin": ["snappdf"]
 }
