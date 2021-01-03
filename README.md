@@ -12,6 +12,7 @@ This is a simple library that lets you convert webpages or HTML into the PDF fil
   * [Installation](#installation)
     + [Downloading local Chromium](#downloading-local-chromium)
     + [Skip the Chromium download](#skip-the-chromium-download)
+    + [Create a test PDF](#create-a-test-pdf)
     + [Comparison to Browsershot](#comparison-to-browsershot)
   * [Credits](#credits)
   * [Licence](#licence)
@@ -121,6 +122,18 @@ Local revision will be used **only** when you don't provide path using `setChrom
 
 ### Skip the Chromium download
 If you need to dynamically skip the download, make use of `SNAPPDF_SKIP_DOWNLOAD` environment variable.
+
+### Create a test PDF
+A simple way to make sure that generating the PDF works is by running the following command:
+
+```bash
+./vendor/bin/snappdf test /path/where/to/save/example.pdf
+```
+
+If you want to run it using different binary, you can specify that too:
+```bash
+./vendor/bin/snappdf test /path/to/example.pdf /usr/bin/google-chrome
+```
 
 ### Comparison to Browsershot
 In case you need much more complex software to perform operations with headless browser go for [Spatie's Browsershot](https://github.com/spatie/browsershot). It's fantastic package.
