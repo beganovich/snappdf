@@ -62,6 +62,11 @@ class Snappdf
 
         $latestRevisionFile = dirname(__FILE__, 2) . '/versions/revision.txt';
 
+        // FreeBSD Support.  Chromium is typically installed via packages or ports.
+        if (PHP_OS == 'FreeBSD' && file_exists(PHP_BINDIR . '/chrome')) {
+            return PHP_BINDIR . '/chrome';
+        }
+
         if (file_exists($latestRevisionFile)) {
             $chromuimBinary = (new DownloadChromiumCommand())->generatePlatformExecutable(
                 file_get_contents($latestRevisionFile)
