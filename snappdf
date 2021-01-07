@@ -17,12 +17,14 @@ foreach ($possibleAutoloadPaths as $possibleAutoloadPath) {
 }
 
 use Beganovich\Snappdf\Command\DownloadChromiumCommand;
+use Beganovich\Snappdf\Command\ConvertHtmlToPdfCommand;
 use Beganovich\Snappdf\Command\MakeTestPdfCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application('Snappdf');
 
 $application->add(new DownloadChromiumCommand());
+$application->add(new ConvertHtmlToPdfCommand());
 $application->add(new MakeTestPdfCommand());
 
 $application->run();

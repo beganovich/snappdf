@@ -112,6 +112,10 @@ class DownloadChromiumCommand extends Command
             return 'Mac';
         }
 
+        if (PHP_OS == 'FreeBSD') {
+            return 'FreeBSD';
+        }
+
         if (stripos(PHP_OS, 'WIN') === 0) {
             return PHP_INT_SIZE == 4 ? 'Win' : 'Win_x64';
         }
@@ -134,6 +138,10 @@ class DownloadChromiumCommand extends Command
 
         if ($platform == 'Linux_x64') {
             return dirname(__FILE__, $level) . "/versions/{$revision}/chrome-linux/chrome";
+        }
+
+        if ($platform == 'FreeBSD') {
+            return PHP_BINDIR . '/chrome';
         }
 
         if ($platform == 'Mac') {
