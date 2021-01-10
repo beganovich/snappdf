@@ -29,6 +29,7 @@ class ConvertHtmlToPdfCommand extends Command
             ->setDescription('Convert HTML to PDF')
             ->addOption('url', '', InputArgument::OPTIONAL)
             ->addOption('html', '', InputArgument::OPTIONAL)
+            ->addOption('binary', null, InputArgument::OPTIONAL)
             ->addArgument('path', InputArgument::REQUIRED);
     }
 
@@ -48,23 +49,33 @@ class ConvertHtmlToPdfCommand extends Command
         $url = $input->getOption('url');
         $html = $input->getOption('html');
         $path = $input->getArgument('path');
+        $binary = $input->getOption('binary');
+
         if (!$url && !$html) {
-            $output->writeln('[ERROR] You must specifiy either --url or --html');
+            $output->writeln('[ERROR] You must specify either --url or --html');
+
             return Command::FAILURE;
         }
 
-        $snappdf = new Snappdf;
+        $snappdf = new Snappdf();
 
         if ($url) {
             $output->writeln(sprintf('Downloading %s and saving it to %s', $url, $path));
+
             $snappdf->setUrl($url);
         } elseif ($html) {
             $snappdf->setHtml($html);
         }
 
-        // Save PDF
+        if ($binary) {
+            $output->writeln('Custom binary set. Using ' . $binary);
+
+            $snappdf->setChromiumPath($binary);
+        }
+
         $snappdf->save($path);
-        $output->write('Success! PDF saved at ' . $path);
+
+        $output->writeln('Success! PDF saved at ' . $path);
 
         return Command::SUCCESS;
     }
