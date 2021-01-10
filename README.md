@@ -12,7 +12,6 @@ This is a simple library that lets you convert webpages or HTML into the PDF fil
   * [Installation](#installation)
     + [Downloading local Chromium](#downloading-local-chromium)
     + [Skip the Chromium download](#skip-the-chromium-download)
-    + [Create a test PDF](#create-a-test-pdf)
     + [Headless Chrome doesn't launch on UNIX](#headless-chrome-doesnt-launch-on-unix)
     + [Comparison to Browsershot](#comparison-to-browsershot)
   * [Credits](#credits)
@@ -98,6 +97,24 @@ Time: 00:00.171, Memory: 6.00 MB
 OK (1 test, 1 assertion)
 ```
 
+#### Command-line usage:
+
+If you want to use snappdf as command-line tool, make use of "convert" command:
+
+```bash
+./vendor/bin/snappdf convert --url https://github.com /path/to/save.pdf
+```
+
+In case you want to convert HTML:
+
+```bash
+./vendor/bin/snappdf convert --html "<h1>Hello world!</h1>" /path/to/save.pdf
+```
+
+You can also specify custom binary location (if you don't use locally downloaded Chromium revision):
+```bash
+./vendor/bin/snappdf convert --url https://github.com --binary /usr/bin/google-chrome /path/to/save.pdf
+```
 
 ## Requirements
 - PHP 7.3+
@@ -124,18 +141,6 @@ Local revision will be used **only** when you don't provide path using `setChrom
 
 ### Skip the Chromium download
 If you need to dynamically skip the download, make use of `SNAPPDF_SKIP_DOWNLOAD` environment variable.
-
-### Create a test PDF
-A simple way to make sure that generating the PDF works is by running the following command:
-
-```bash
-./vendor/bin/snappdf test /path/where/to/save/example.pdf
-```
-
-If you want to run it using different binary, you can specify that too:
-```bash
-./vendor/bin/snappdf test /path/to/example.pdf /usr/bin/google-chrome
-```
 
 ### Headless Chrome doesn't launch on UNIX
 Make sure your system has installed all required dependencies.

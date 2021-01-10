@@ -6,6 +6,7 @@ namespace Beganovich\Snappdf\Command;
 use Beganovich\Snappdf\Exception\PlatformNotSupported;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
@@ -33,7 +34,9 @@ class DownloadChromiumCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setDescription('Downloads a latest version of Chromium');
+        $this
+            ->setDescription('Downloads a latest version of Chromium')
+            ->addOption('force', null, InputOption::VALUE_NONE);
     }
 
     /**
@@ -42,10 +45,10 @@ class DownloadChromiumCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
+     * @return int
      * @throws \Throwable
      * @throws \Symfony\Component\Filesystem\Exception\IOException
-     * @return int
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -53,6 +56,14 @@ class DownloadChromiumCommand extends Command
             $output->writeln('SNAPPDF_SKIP_DOWNLOAD variable found. Skipping the download.');
 
             return Command::SUCCESS;
+        }
+
+        if (file_exists(dirname(__FILE__, 3) . '/versions/revision.txt')) {
+            if (!$input->getOption('force')) {
+                $output->writeln('Chromium binary already downloaded. Provide --force to download again.');
+
+                return Command::SUCCESS;
+            }
         }
 
         $response = json_decode(
@@ -65,12 +76,16 @@ class DownloadChromiumCommand extends Command
 
         $platformRevision = "{$latestVersion}-{$this->generatePlatformCode()}";
 
-        if (!file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}")) {
-            file_put_contents(
-                dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip",
-                fopen("https://download-chromium.appspot.com/dl/{$this->generatePlatformCode()}?type=snapshots", 'r')
-            );
+        if (file_exists(dirname(__FILE__, 3) . "/versions/{$platformRevision}")) {
+            $output->writeln('Latest revision already downloaded.');
+
+            return Command::SUCCESS;
         }
+
+        file_put_contents(
+            dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip",
+            fopen("https://download-chromium.appspot.com/dl/{$this->generatePlatformCode()}?type=snapshots", 'r')
+        );
 
         $output->writeln('Download completed. Extracting the zip archive.');
 
@@ -99,8 +114,8 @@ class DownloadChromiumCommand extends Command
     /**
      * Generate transformed platform codename for "appspot.com" download.
      *
-     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
      * @return string
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
      */
     public function generatePlatformCode(): string
     {
@@ -129,8 +144,8 @@ class DownloadChromiumCommand extends Command
      * @param string $revision
      * @param int $level
      *
-     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
      * @return null|string
+     * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
      */
     public function generatePlatformExecutable(string $revision, int $level = 3): ?string
     {
@@ -151,5 +166,7 @@ class DownloadChromiumCommand extends Command
         if ($platform == 'Win' || $platform == 'Win_x64') {
             return dirname(__FILE__, $level) . "/versions/{$revision}/chrome-win/chrome.exe";
         }
+
+        return null;
     }
 }
