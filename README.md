@@ -73,6 +73,25 @@ SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
 
 Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
 
+#### Command-line usage:
+
+If you want to use snappdf as command-line tool, make use of "convert" command:
+
+```bash
+./vendor/bin/snappdf convert --url https://github.com /path/to/save.pdf
+```
+
+In case you want to convert HTML:
+
+```bash
+./vendor/bin/snappdf convert --html "<h1>Hello world!</h1>" /path/to/save.pdf
+```
+
+You can also specify custom binary location (if you don't use locally downloaded Chromium revision):
+```bash
+./vendor/bin/snappdf convert --url https://github.com --binary /usr/bin/google-chrome /path/to/save.pdf
+```
+
 ## Speed
 Main benefit and reason why this library exists is the speed of generating PDFs. It communicates directly with browser itself and it takes less than .5s to generate PDFs (with cold start). This was tested on mid-range laptop with i5-5300U and average SSD.
 
@@ -95,25 +114,6 @@ Snappdf (Test\Snappdf\Snappdf)
 Time: 00:00.171, Memory: 6.00 MB
 
 OK (1 test, 1 assertion)
-```
-
-#### Command-line usage:
-
-If you want to use snappdf as command-line tool, make use of "convert" command:
-
-```bash
-./vendor/bin/snappdf convert --url https://github.com /path/to/save.pdf
-```
-
-In case you want to convert HTML:
-
-```bash
-./vendor/bin/snappdf convert --html "<h1>Hello world!</h1>" /path/to/save.pdf
-```
-
-You can also specify custom binary location (if you don't use locally downloaded Chromium revision):
-```bash
-./vendor/bin/snappdf convert --url https://github.com --binary /usr/bin/google-chrome /path/to/save.pdf
 ```
 
 ## Requirements
