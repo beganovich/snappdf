@@ -17,6 +17,8 @@ class Snappdf
 
     private $html;
 
+    private $waitBeforePrinting;
+
     public function getUrl(): ?string
     {
         return $this->url;
@@ -80,6 +82,13 @@ class Snappdf
         return $this;
     }
 
+    public function waitBeforePrinting(int $waitBeforePrinting): self
+    {
+        $this->waitBeforePrinting = $waitBeforePrinting;
+
+        return $this;
+    }
+
     public function generate(): ?string
     {
         $content = [
@@ -129,6 +138,10 @@ class Snappdf
             '--print-to-pdf=' . $pdf,
             $content['content'],
         ];
+
+        if ($this->waitBeforePrinting) {
+            array_splice($commandInput, 3, 0, ['--virtual-time-budget=' . (int)$this->waitBeforePrinting]);
+        }
 
         $platform = (new DownloadChromiumCommand())->generatePlatformCode();
 
