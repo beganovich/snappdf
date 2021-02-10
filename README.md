@@ -59,7 +59,7 @@ variable.
 SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
 ```
 
-This is example for Nginx configuration (server block) (thanks @cdahinten):
+This is example for Nginx configuration (server block) (thanks [@cdahinten](https://github.com/beganovich/snappdf/issues/15#issuecomment-776135341)):
 
 ```
 fastcgi_param SNAPPDF_EXECUTABLE_PATH '/usr/bin/chromium';
