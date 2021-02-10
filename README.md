@@ -52,6 +52,20 @@ $pdf = $snappdf
     ->save('/path/to/your/file.pdf');
 ```
 
+If none of previously listed option fits your needs, you can also set path to executable Chromium with environment
+variable.
+
+```bash
+SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
+```
+
+This is example for Nginx configuration (server block) (thanks @cdahinten):
+
+```
+fastcgi_param SNAPPDF_EXECUTABLE_PATH '/usr/bin/chromium';
+fastcgi_param SNAPPDF_SKIP_DOWNLOAD true;
+```
+
 If you need to generate PDF only, without saving it, make use of `generate()`:
 
 ```php
@@ -65,13 +79,6 @@ $pdf = $snappdf
 file_put_contents('my.pdf', $pdf); // for local storage
 
 Storage::disk('s3')->put('my.pdf', $pdf); // for remote storage
-```
-
-If none of previously listed option fits your needs, you can also set path to executable Chromium with environment
-variable.
-
-```bash
-SNAPPDF_EXECUTABLE_PATH=/path/to/your/chrome
 ```
 
 Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
