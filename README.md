@@ -209,6 +209,8 @@ libxtst6
 lsb-release
 wget
 xdg-utils
+
+Note: You might need to install ‘libgbm-dev’ and ‘libxshmfence-dev’ also. This is reported for Ubuntu 20.04.
 ```
 
 </details>
