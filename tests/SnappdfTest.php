@@ -75,4 +75,19 @@ class SnappdfTest extends TestCase
 
         unlink($output);
     }
+
+    public function testFromWebsite()
+    {
+        $output = dirname(__FILE__, 2) . '/example.pdf';
+
+        $snappdf = new Snappdf();
+
+        $snappdf
+            ->setUrl('https://expired.badssl.com/')
+            ->save($output);
+
+        $this->assertEquals('application/pdf', mime_content_type($output));
+
+        unlink($output);
+    }
 }

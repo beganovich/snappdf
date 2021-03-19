@@ -135,6 +135,7 @@ class Snappdf
             '--no-sandbox',
             '--print-to-pdf-no-header',
             '--hide-scrollbars',
+            '--ignore-certificate-errors',
             '--print-to-pdf=' . $pdf,
             $content['content'],
         ];
