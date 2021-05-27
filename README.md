@@ -2,6 +2,8 @@
     <img src="https://raw.githubusercontent.com/beganovich/snappdf/master/cover.png" alt="snappdf logo">
 </p>
 
+![Github Actions Status](https://github.com/beganovich/snappdf/actions/workflows/phpunit.yml/badge.svg)
+
 # snappdf
 
 This is a simple library that lets you convert webpages or HTML into the PDF file using Chromium or Google Chrome.
