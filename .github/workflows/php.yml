@@ -29,5 +29,5 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
     
-    - name: Install Chromium Browser
-      run: sudo snap install chromium
+    - name: Download local Chromium revision
+      run: php snappdf download
