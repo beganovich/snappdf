@@ -31,3 +31,6 @@ jobs:
     
     - name: Download local Chromium revision
       run: php snappdf download
+      
+    - name: PHPUnit tests
+      run: php vendor/bin/phpunit --testdox
