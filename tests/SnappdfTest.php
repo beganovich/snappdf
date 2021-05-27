@@ -8,15 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class SnappdfTest extends TestCase
 {
-    public static $chromiumPath = '/usr/bin/google-chrome';
-
     public function testGeneratingPdfWorks()
     {
         $snappdf = new Snappdf();
         $html = '<h1>Hello world</h1>';
 
         $pdf = $snappdf
-            ->setChromiumPath(self::$chromiumPath)
             ->setHtml($html)
             ->generate();
 
@@ -30,9 +27,7 @@ class SnappdfTest extends TestCase
 
         $snappdf = new Snappdf();
 
-        $snappdf
-            ->setChromiumPath(self::$chromiumPath)
-            ->generate();
+        $snappdf->generate();
     }
 
     public function testBuiltInChromiumShouldBeUsed()
