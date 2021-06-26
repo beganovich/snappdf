@@ -13,11 +13,36 @@ class Snappdf
 {
     private $chromiumPath;
 
+    private $chromiumArguments = [];
+
     private $url;
 
     private $html;
 
     private $waitBeforePrinting;
+
+    public function __construct()
+    {
+        $this->chromiumArguments = [
+            '--headless',
+            '--disable-gpu',
+            '--disable-translate',
+            '--disable-extensions',
+            '--disable-sync',
+            '--disable-background-networking',
+            '--disable-software-rasterizer',
+            '--disable-default-apps',
+            '--disable-dev-shm-usage',
+            '--safebrowsing-disable-auto-update',
+            '--run-all-compositor-stages-before-draw',
+            '--no-first-run',
+            '--no-margins',
+            '--no-sandbox',
+            '--print-to-pdf-no-header',
+            '--hide-scrollbars',
+            '--ignore-certificate-errors',
+        ];
+    }
 
     public function getUrl(): ?string
     {
@@ -70,6 +95,57 @@ class Snappdf
         return $this;
     }
 
+    public function getChromiumArguments(): array
+    {        
+        if (getenv('SNAPPDF_EXECUTABLE_ARGUMENTS')) {
+            $arguments = explode(" ", getenv('SNAPPDF_EXECUTABLE_ARGUMENTS'));
+        } else {
+            $arguments = $this->chromiumArguments;
+        }
+
+        if ($this->waitBeforePrinting) {
+            $matches  = preg_grep ('/--virtual-time-budget=(.*)/', $arguments);
+            if (count($matches) > 0) {
+                $arguments = preg_replace(
+                    '/--virtual-time-budget=(.*)/',
+                    '--virtual-time-budget=' . (int)$this->waitBeforePrinting,
+                    $arguments
+                );
+            }else{
+                array_splice($arguments, 2, 0, ['--virtual-time-budget=' . (int)$this->waitBeforePrinting]);
+            }
+        }
+
+        return $arguments;
+    }
+
+    public function addChromiumArguments(string $chromiumArgument): self
+    {
+        $arguments = explode(" ", $chromiumArgument);
+        
+        foreach ($arguments as $argument) {
+            $arg = explode('=', $argument);
+            $matches  = preg_grep ('/'.$arg[0].'(.*)/', $this->chromiumArguments);
+            if (count($matches) > 0) {
+                $this->chromiumArguments = preg_replace(
+                    '/'.$arg[0].'(.*)/',
+                    $argument,
+                    $this->chromiumArguments
+                );
+            } else {
+                $this->chromiumArguments = array_merge($this->chromiumArguments, [$argument]);
+            }
+        }
+        return $this;
+    }
+
+    public function clearChromiumArguments(): self
+    {
+        $this->chromiumArguments = [];
+
+        return $this;
+    }
+
     public function getHtml(): ?string
     {
         return $this->html;
@@ -87,6 +163,11 @@ class Snappdf
         $this->waitBeforePrinting = $waitBeforePrinting;
 
         return $this;
+    }
+
+    public function getWaitTime(): ?int
+    {
+        return $this->waitBeforePrinting;
     }
 
     public function generate(): ?string
@@ -117,32 +198,16 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
-        $commandInput = [
-            $this->getChromiumPath(),
-            '--headless',
-            '--disable-gpu',
-            '--disable-translate',
-            '--disable-extensions',
-            '--disable-sync',
-            '--disable-background-networking',
-            '--disable-software-rasterizer',
-            '--disable-default-apps',
-            '--disable-dev-shm-usage',
-            '--safebrowsing-disable-auto-update',
-            '--run-all-compositor-stages-before-draw',
-            '--no-first-run',
-            '--no-margins',
-            '--no-sandbox',
-            '--print-to-pdf-no-header',
-            '--hide-scrollbars',
-            '--ignore-certificate-errors',
+        $commandInput = [ $this->getChromiumPath() ];
+        foreach ($this->getChromiumArguments() as $argument) {
+            array_push($commandInput, $argument);
+        }
+
+        array_push(
+            $commandInput,
             '--print-to-pdf=' . $pdf,
             $content['content'],
-        ];
-
-        if ($this->waitBeforePrinting) {
-            array_splice($commandInput, 3, 0, ['--virtual-time-budget=' . (int)$this->waitBeforePrinting]);
-        }
+        );
 
         $platform = (new DownloadChromiumCommand())->generatePlatformCode();
 
