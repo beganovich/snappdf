@@ -96,7 +96,7 @@ class Snappdf
     }
 
     public function getChromiumArguments(): array
-    {        
+    {
         if (getenv('SNAPPDF_EXECUTABLE_ARGUMENTS')) {
             $arguments = explode(" ", getenv('SNAPPDF_EXECUTABLE_ARGUMENTS'));
         } else {
@@ -104,14 +104,14 @@ class Snappdf
         }
 
         if ($this->waitBeforePrinting) {
-            $matches  = preg_grep ('/--virtual-time-budget=(.*)/', $arguments);
+            $matches  = preg_grep('/--virtual-time-budget=(.*)/', $arguments);
             if (count($matches) > 0) {
                 $arguments = preg_replace(
                     '/--virtual-time-budget=(.*)/',
                     '--virtual-time-budget=' . (int)$this->waitBeforePrinting,
                     $arguments
                 );
-            }else{
+            } else {
                 array_splice($arguments, 2, 0, ['--virtual-time-budget=' . (int)$this->waitBeforePrinting]);
             }
         }
@@ -125,7 +125,7 @@ class Snappdf
         
         foreach ($arguments as $argument) {
             $arg = explode('=', $argument);
-            $matches  = preg_grep ('/'.$arg[0].'(.*)/', $this->chromiumArguments);
+            $matches  = preg_grep('/'.$arg[0].'(.*)/', $this->chromiumArguments);
             if (count($matches) > 0) {
                 $this->chromiumArguments = preg_replace(
                     '/'.$arg[0].'(.*)/',

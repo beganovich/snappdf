@@ -31,7 +31,7 @@ class SnappdfTest extends TestCase
     }
 
     public function testBuiltInChromiumShouldBeUsed()
-    {        
+    {
         $chromiumPdf = new Snappdf();
 
         $latestRevision = dirname(__FILE__, 2) . '/versions/revision.txt';
@@ -97,8 +97,7 @@ class SnappdfTest extends TestCase
         $snappdf->waitBeforePrinting(5);
 
         $this->assertEquals(5, $snappdf->getWaitTime());
-        $this->assertContainsEquals('--virtual-time-budget=5',$snappdf->getChromiumArguments());
-
+        $this->assertContainsEquals('--virtual-time-budget=5', $snappdf->getChromiumArguments());
     }
 
     public function testArgumentCanBeAdded()
@@ -108,7 +107,7 @@ class SnappdfTest extends TestCase
         $snappdf->addChromiumArguments('--virtual-time-budget=5');
         
         $this->assertNull($snappdf->getWaitTime());
-        $this->assertContainsEquals('--virtual-time-budget=5',$snappdf->getChromiumArguments());
+        $this->assertContainsEquals('--virtual-time-budget=5', $snappdf->getChromiumArguments());
     }
 
     public function testWaitPrecidenceOverArgument()
@@ -119,8 +118,8 @@ class SnappdfTest extends TestCase
             ->addChromiumArguments('--virtual-time-budget=20');
 
         $this->assertEquals(5, $snappdf->getWaitTime());
-        $this->assertNotContainsEquals('--virtual-time-budget=20',$snappdf->getChromiumArguments());
-        $this->assertContainsEquals('--virtual-time-budget=5',$snappdf->getChromiumArguments());
+        $this->assertNotContainsEquals('--virtual-time-budget=20', $snappdf->getChromiumArguments());
+        $this->assertContainsEquals('--virtual-time-budget=5', $snappdf->getChromiumArguments());
     }
 
     public function testArgumentsAreNotDuplicated()
@@ -130,7 +129,7 @@ class SnappdfTest extends TestCase
         $snappdf->addChromiumArguments('--single-process')
             ->addChromiumArguments('--single-process');
 
-        $this->assertEquals(1, array_count_values($snappdf->getChromiumArguments())['--single-process'] );
+        $this->assertEquals(1, array_count_values($snappdf->getChromiumArguments())['--single-process']);
     }
 
     public function testArgumentsCanBeCleared()
