@@ -85,6 +85,36 @@ Storage::disk('s3')->put('my.pdf', $pdf); // for remote storage
 
 Note: `setChromiumPath` has highest priority. Second one is environment variable & third local download.
 
+While the default arguments should work in most use cases, but it is possible to specify which arguments to use:
+
+Using the `addChromiumArguments` Method:
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$pdf = $snappdf
+    ->setUrl('https://github.com')
+    ->setChromiumPath('/path/to/your/chrome')
+    ->addChromiumArguments('--single-process --tls1')
+    ->generate();
+```
+
+In the event you want to override the default arguments, you can use the the `SNAPPDF_EXECUTABLE_ARGUMENTS` environmental variable.
+
+NOTE: The `--print-to-pdf` argument is always added, and the `--virtual-time-budget` argument is added whenever the `waitBeforePrinting` method is called.
+
+To clear all arguments you can use the `clearChromiumArguments` method.
+
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+// $snappdf->getChromiumArguments() = [ '--headless', '--disable-gpu', ... ]
+
+$snappdf->setChromiumPath('/path/to/your/chrome')
+    ->clearChromiumArguments();
+
+// $snappdf->getChromiumArguments() = []
+```
+
 #### Command-line usage:
 
 If you want to use snappdf as command-line tool, make use of "convert" command:
