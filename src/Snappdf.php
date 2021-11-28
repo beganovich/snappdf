@@ -122,7 +122,7 @@ class Snappdf
     public function addChromiumArguments(string $chromiumArgument): self
     {
         $arguments = explode(" ", $chromiumArgument);
-        
+
         foreach ($arguments as $argument) {
             $arg = explode('=', $argument);
             $matches  = preg_grep('/'.$arg[0].'(.*)/', $this->chromiumArguments);
@@ -237,12 +237,15 @@ class Snappdf
 
     private function executeOnWindows(array $commands, $pdf): ?string
     {
-        $command = implode(' ', $commands);
+        $command = implode(' ', $commands).' 2>&1'; // must add 2>&1 to redirect stderr to stdout // see https://stackoverflow.com/a/16665146/7511165
 
         exec($command, $output, $statusCode);
 
-        if (!$statusCode) {
-            throw new \Beganovich\Snappdf\Exception\ProcessFailedException($output);
+        if ($statusCode && !empty($output)) {
+            // $output is an array of lines of the command output
+            $message = implode("\n", $output);
+            // ProcessFailedException accepts only a string as $message
+            throw new \Beganovich\Snappdf\Exception\ProcessFailedException($message);
         }
 
         return file_get_contents($pdf);
