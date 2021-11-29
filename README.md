@@ -6,7 +6,7 @@
 
 # snappdf
 
-This is a simple library that lets you convert webpages or HTML into the PDF file using Chromium or Google Chrome.
+A simple library that lets you convert webpages or HTML into PDF files using Chromium-powered browsers.
 
 - [snappdf](#snappdf)
     * [Usage](#usage)
