@@ -54,6 +54,22 @@ $pdf = $snappdf
     ->save('/path/to/your/file.pdf');
 ```
 
+Laravel usage with blade templates
+
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$fields = [...];
+
+// Render method returns HTML string (template compile)
+$html = view('pdf.warranty', compact('fields'))->render();
+
+$pdf = $snappdf
+    ->setHtml($html)
+    ->save('/path/to/your/file.pdf');
+```
+
+
 If none of previously listed option fits your needs, you can also set path to executable Chromium with environment
 variable.
 
