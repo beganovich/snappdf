@@ -23,9 +23,9 @@
         "php": "^7.3|^7.4|^8.0|^8.1",
         "ext-json": "*",
         "ext-zip": "*",
-        "symfony/process": "^5.2",
-        "symfony/console": "^5.2",
-        "symfony/filesystem": "^5.2"
+        "symfony/process": "^5.2|^6.0",
+        "symfony/console": "^5.2|^6.0",
+        "symfony/filesystem": "^5.2|^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
