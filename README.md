@@ -9,16 +9,19 @@
 A simple library that lets you convert webpages or HTML into PDF files using Chromium-powered browsers.
 
 - [snappdf](#snappdf)
-    * [Usage](#usage)
-    * [Speed](#speed)
-    * [Requirements](#requirements)
-    * [Installation](#installation)
-        + [Downloading local Chromium](#downloading-local-chromium)
-        + [Skip the Chromium download](#skip-the-chromium-download)
-        + [Headless Chrome doesn't launch on UNIX](#headless-chrome-doesnt-launch-on-unix)
-        + [Comparison to Browsershot](#comparison-to-browsershot)
-    * [Credits](#credits)
-    * [Licence](#licence)
+  - [Usage](#usage)
+      - [Command-line usage:](#command-line-usage)
+  - [Speed](#speed)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Downloading local Chromium](#downloading-local-chromium)
+    - [Skip the Chromium download](#skip-the-chromium-download)
+    - [Headless Chrome doesn't launch on UNIX](#headless-chrome-doesnt-launch-on-unix)
+    - [Comparison to Browsershot](#comparison-to-browsershot)
+    - [Delay loading](#delay-loading)
+    - [Upgrading to 2.x](#upgrading-to-2x)
+  - [Credits](#credits)
+  - [Licence](#licence)
 
 ## Usage
 
@@ -326,6 +329,9 @@ printing.
 
 TLDR; If you set delay loading to 10 seconds & Ajax call takes 2 seconds to complete, PDF rendering will start
 immediately after Ajax call is completed (after 2 seconds), and it won't wait 10 seconds.
+
+### Upgrading to 2.x
+[Upgrade notes](https://github.com/beganovich/snappdf/blob/master/upgrading-from-1.x.md).
 
 ## Credits
 
