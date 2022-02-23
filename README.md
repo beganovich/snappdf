@@ -9,16 +9,18 @@
 A simple library that lets you convert webpages or HTML into PDF files using Chromium-powered browsers.
 
 - [snappdf](#snappdf)
-    * [Usage](#usage)
-    * [Speed](#speed)
-    * [Requirements](#requirements)
-    * [Installation](#installation)
-        + [Downloading local Chromium](#downloading-local-chromium)
-        + [Skip the Chromium download](#skip-the-chromium-download)
-        + [Headless Chrome doesn't launch on UNIX](#headless-chrome-doesnt-launch-on-unix)
-        + [Comparison to Browsershot](#comparison-to-browsershot)
-    * [Credits](#credits)
-    * [Licence](#licence)
+  - [Usage](#usage)
+      - [Command-line usage:](#command-line-usage)
+  - [Speed](#speed)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Downloading local Chromium](#downloading-local-chromium)
+    - [Skip the Chromium download](#skip-the-chromium-download)
+    - [Headless Chrome doesn't launch on UNIX](#headless-chrome-doesnt-launch-on-unix)
+    - [Comparison to Browsershot](#comparison-to-browsershot)
+    - [Delay loading](#delay-loading)
+  - [Credits](#credits)
+  - [Licence](#licence)
 
 ## Usage
 
@@ -180,7 +182,7 @@ OK (1 test, 1 assertion)
 
 ## Requirements
 
-- PHP 7.3+
+- PHP 8
 
 ## Installation
 
