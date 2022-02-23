@@ -1,6 +1,6 @@
 # Upgrading from 1.x
 
-## 2.0
+## 2.0.0
 ### Breaking changes:
 - Minimum required PHP version is 8.0
 
