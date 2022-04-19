@@ -140,4 +140,19 @@ class SnappdfTest extends TestCase
 
         $this->assertCount(0, $snappdf->getChromiumArguments());
     }
+
+    public function testArgumentCanBeRemoved()
+    {
+        $snappdf = new Snappdf();
+
+        $this->assertContains('--headless', $snappdf->getChromiumArguments());
+        
+        $argumentsCount = count($snappdf->getChromiumArguments());
+
+        $snappdf->clearChromiumArgument('--headless');
+
+        $this->assertNotContains('--headless', $snappdf->getChromiumArguments());
+
+        $this->assertEquals($argumentsCount, count($snappdf->getChromiumArguments()) + 1);
+    }
 }
