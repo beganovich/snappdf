@@ -126,6 +126,7 @@ class Snappdf
         foreach ($arguments as $argument) {
             $arg = explode('=', $argument);
             $matches  = preg_grep('/'.$arg[0].'(.*)/', $this->chromiumArguments);
+
             if (count($matches) > 0) {
                 $this->chromiumArguments = preg_replace(
                     '/'.$arg[0].'(.*)/',
@@ -136,12 +137,20 @@ class Snappdf
                 $this->chromiumArguments = array_merge($this->chromiumArguments, [$argument]);
             }
         }
+
         return $this;
     }
 
     public function clearChromiumArguments(): self
     {
         $this->chromiumArguments = [];
+
+        return $this;
+    }
+
+    public function clearChromiumArgument(string $argument): self
+    {
+        $this->chromiumArguments = \array_diff($this->chromiumArguments, [$argument]);
 
         return $this;
     }
