@@ -117,6 +117,15 @@ $pdf = $snappdf
     ->generate();
 ```
 
+If you want to remove single argument, you can make use of `clearChromiumArgument`. 
+
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$snappdf->getChromiumArguments(); // ['--headless', '--disable-gpu', '--disable-translations']
+$snappdf->clearChromiumArgument('--headless'); // ['--disable-gpu', '--disable-translations']
+```
+
 In the event you want to override the default arguments, you can use the the `SNAPPDF_EXECUTABLE_ARGUMENTS` environmental variable.
 
 NOTE: The `--print-to-pdf` argument is always added, and the `--virtual-time-budget` argument is added whenever the `waitBeforePrinting` method is called.
