@@ -21,6 +21,8 @@ class Snappdf
 
     private $waitBeforePrinting;
 
+    private $keepTemporaryFiles = false;
+
     public function __construct()
     {
         $this->chromiumArguments = [
@@ -125,11 +127,11 @@ class Snappdf
 
         foreach ($arguments as $argument) {
             $arg = explode('=', $argument);
-            $matches  = preg_grep('/'.$arg[0].'(.*)/', $this->chromiumArguments);
+            $matches  = preg_grep('/' . $arg[0] . '(.*)/', $this->chromiumArguments);
 
             if (count($matches) > 0) {
                 $this->chromiumArguments = preg_replace(
-                    '/'.$arg[0].'(.*)/',
+                    '/' . $arg[0] . '(.*)/',
                     $argument,
                     $this->chromiumArguments
                 );
@@ -179,6 +181,27 @@ class Snappdf
         return $this->waitBeforePrinting;
     }
 
+    public function keepTemporaryFiles(bool $keep): self
+    {
+        $this->keepTemporaryFiles = $keep;
+
+        return $this;
+    }
+
+    public function getKeepTemporaryFiles(): bool
+    {
+        return (bool) $this->keepTemporaryFiles;
+    }
+
+    private function cleanup(string $tempFile): void
+    {
+        if ($this->keepTemporaryFiles) {
+            return;
+        }
+
+        unlink($tempFile);
+    }
+
     public function generate(): ?string
     {
         $content = [
@@ -207,7 +230,8 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
-        $commandInput = [ $this->getChromiumPath() ];
+        $commandInput = [$this->getChromiumPath()];
+
         foreach ($this->getChromiumArguments() as $argument) {
             array_push($commandInput, $argument);
         }
@@ -232,7 +256,11 @@ class Snappdf
             throw new \Symfony\Component\Process\Exception\ProcessFailedException($process);
         }
 
-        return file_get_contents($pdf);
+        $content = file_get_contents($pdf);
+
+        $this->cleanup($pdf);
+
+        return $content;
     }
 
     public function save(string $path): void
@@ -246,7 +274,7 @@ class Snappdf
 
     private function executeOnWindows(array $commands, $pdf): ?string
     {
-        $command = implode(' ', $commands).' 2>&1'; // must add 2>&1 to redirect stderr to stdout // see https://stackoverflow.com/a/16665146/7511165
+        $command = implode(' ', $commands) . ' 2>&1'; // must add 2>&1 to redirect stderr to stdout // see https://stackoverflow.com/a/16665146/7511165
 
         exec($command, $output, $statusCode);
 
@@ -257,6 +285,10 @@ class Snappdf
             throw new \Beganovich\Snappdf\Exception\ProcessFailedException($message);
         }
 
-        return file_get_contents($pdf);
+        $content = file_get_contents($pdf);
+
+        $this->cleanup($pdf);
+
+        return file_get_contents($content);
     }
 }
