@@ -181,7 +181,7 @@ class Snappdf
         return $this->waitBeforePrinting;
     }
 
-    public function keepTemporaryFiles(bool $keep): self
+    public function setKeepTemporaryFiles(bool $keep): self
     {
         $this->keepTemporaryFiles = $keep;
 
