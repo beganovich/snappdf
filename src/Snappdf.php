@@ -193,13 +193,17 @@ class Snappdf
         return (bool) $this->keepTemporaryFiles;
     }
 
-    private function cleanup(string $tempFile): void
+    private function cleanup(string $tempFile, array $content): void
     {
         if ($this->keepTemporaryFiles) {
             return;
         }
 
         unlink($tempFile);
+
+        if ($content['type'] === 'html') {
+            unlink($content['content']);
+        }
     }
 
     public function generate(): ?string
@@ -245,7 +249,7 @@ class Snappdf
         $platform = (new DownloadChromiumCommand())->generatePlatformCode();
 
         if ($platform == 'Win' || $platform == 'Win_x64') {
-            return $this->executeOnWindows($commandInput, $pdf);
+            return $this->executeOnWindows($commandInput, $pdf, $content);
         }
 
         $process = new Process($commandInput);
@@ -256,11 +260,11 @@ class Snappdf
             throw new \Symfony\Component\Process\Exception\ProcessFailedException($process);
         }
 
-        $content = file_get_contents($pdf);
+        $pdfContent = file_get_contents($pdf);
 
-        $this->cleanup($pdf);
+        $this->cleanup($pdf, $content);
 
-        return $content;
+        return $pdfContent;
     }
 
     public function save(string $path): void
@@ -272,7 +276,7 @@ class Snappdf
         $filesystem->appendToFile($path, $pdf);
     }
 
-    private function executeOnWindows(array $commands, $pdf): ?string
+    private function executeOnWindows(array $commands, $pdf, array $content): ?string
     {
         $command = implode(' ', $commands) . ' 2>&1'; // must add 2>&1 to redirect stderr to stdout // see https://stackoverflow.com/a/16665146/7511165
 
@@ -285,10 +289,10 @@ class Snappdf
             throw new \Beganovich\Snappdf\Exception\ProcessFailedException($message);
         }
 
-        $content = file_get_contents($pdf);
+        $pdfContent = file_get_contents($pdf);
 
-        $this->cleanup($pdf);
+        $this->cleanup($pdf, $content);
 
-        return file_get_contents($content);
+        return file_get_contents($pdfContent);
     }
 }
