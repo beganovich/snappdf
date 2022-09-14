@@ -19,6 +19,7 @@ A simple library that lets you convert webpages or HTML into PDF files using Chr
     - [Headless Chrome doesn't launch on UNIX](#headless-chrome-doesnt-launch-on-unix)
     - [Comparison to Browsershot](#comparison-to-browsershot)
     - [Delay loading](#delay-loading)
+    - [Temporary files](#temporary-files)
   - [Credits](#credits)
   - [Licence](#licence)
 
@@ -337,6 +338,21 @@ printing.
 
 TLDR; If you set delay loading to 10 seconds & Ajax call takes 2 seconds to complete, PDF rendering will start
 immediately after Ajax call is completed (after 2 seconds), and it won't wait 10 seconds.
+
+### Temporary files
+Starting with version 3, snappdf will automatically get rid of temporary files. If you still want to keep them, you can do it using `setKeepTemporaryFiles` method.
+
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$pdf = $snappdf
+    ->setUrl('https://github.com')
+    ->setChromiumPath('/path/to/your/chrome')
+    ->setKeepTemporaryFiles(true)
+    ->generate();
+
+file_put_contents('my.pdf', $pdf);
+```
 
 ## Credits
 
