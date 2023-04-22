@@ -3,5 +3,10 @@
 ## 2.0.0
 ### Breaking changes:
 - Minimum required PHP version is 8.0
+  
+# Upgrading from 2.x
 
-That's it for now. We upgraded under the hood dependencies which made us bump the minimum PHP version.
+3.0.0:
+
+### Breaking changes:
+- Minimum required PHP version is 8.1
