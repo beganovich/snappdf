@@ -293,6 +293,6 @@ class Snappdf
 
         $this->cleanup($pdf, $content);
 
-        return file_get_contents($pdfContent);
+        return $pdfContent;
     }
 }
