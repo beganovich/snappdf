@@ -10,15 +10,21 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-class DownloadChromiumCommand extends Command
-{
     /**
      * Command signature.
      *
-     * @var string
      */
-    protected static $defaultName = 'download';
+#[AsCommand(
+    name: 'download',
+    description: 'Downloads the chromium binary',
+    hidden: false,
+    aliases: ['download:chromium']
+)]
+class DownloadChromiumCommand extends Command
+{
+
 
     /**
      * Download link for revisions.
