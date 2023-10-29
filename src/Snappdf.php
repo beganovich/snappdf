@@ -40,7 +40,7 @@ class Snappdf
             '--no-first-run',
             '--no-margins',
             '--no-sandbox',
-            '--print-to-pdf-no-header',
+            '--no-pdf-header-footer',
             '--hide-scrollbars',
             '--ignore-certificate-errors',
         ];
