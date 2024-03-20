@@ -45,7 +45,7 @@ class ConvertHtmlToPdfCommand extends Command
      * @throws \Beganovich\Snappdf\Exception\PlatformNotSupported
      * @throws \Beganovich\Snappdf\Exception\ProcessFailedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $url = $input->getOption('url');
         $html = $input->getOption('html');
