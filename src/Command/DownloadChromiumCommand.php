@@ -110,6 +110,8 @@ class DownloadChromiumCommand extends Command
 
         chmod($this->generatePlatformExecutable($platformRevision), 0755);
 
+        $this->setCrashpadExecutable($platformRevision);
+
         (new Filesystem())->remove(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip");
 
         $output->writeln("Completed! {$platformRevision} currently in use.");
@@ -174,5 +176,18 @@ class DownloadChromiumCommand extends Command
         }
 
         return null;
+    }
+
+    public function setCrashpadExecutable(string $revision, int $level = 3): void
+    {
+        $platform = $this->generatePlatformCode();
+
+        if ($platform == 'Linux_x64') {
+            $path = dirname(__FILE__, $level) . "/versions/{$revision}/chrome-linux/chrome_crashpad_handler";
+
+            if(file_exists($path))
+                chmod($path, 0755);
+        }
+
     }
 }
