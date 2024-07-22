@@ -111,7 +111,8 @@ class DownloadChromiumCommand extends Command
 
         file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
 
-        chmod($this->generatePlatformExecutable($platformRevision), 0755);
+        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome', 0755);
+        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome_crashpad_handler', 0755);
 
         (new Filesystem())->remove(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip");
 
@@ -122,6 +123,9 @@ class DownloadChromiumCommand extends Command
 
     private function getUngoogled($output)
     {
+
+        $output->writeln('Starting download. Ungoogled Chrome');
+
         $platformRevision = 'ungoogled';
         $url = 'https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/126.0.6478.182-1/ungoogled-chromium_126.0.6478.182-1_linux.tar.xz';
 
