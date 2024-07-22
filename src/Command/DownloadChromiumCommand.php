@@ -127,25 +127,20 @@ class DownloadChromiumCommand extends Command
         $output->writeln('Starting download. Ungoogled Chrome');
 
         $platformRevision = 'ungoogled';
-        $url = 'https://pdf.invoicing.co/ungoogled.zip';
+        $url = 'https://pdf.invoicing.co/ungoogled.tar';
 
         file_put_contents(
-            dirname(__FILE__, 3) . "/versions/ungoogled.zip",
+            dirname(__FILE__, 3) . "/versions/ungoogled.tar",
             fopen($url, 'r')
         );
 
         $output->writeln('Extracting');
+        mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
 
-        $archive = new ZipArchive();
+        $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
+        $phar->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}", null, true);
 
-        if ($archive->open(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip")) {
-            mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
-
-            $archive->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
-            $archive->close();
-        }
-
-        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.zip");
+        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
 
         $output->writeln('Archive extracted.');
 
