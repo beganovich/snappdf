@@ -134,16 +134,25 @@ class DownloadChromiumCommand extends Command
             fopen($url, 'r')
         );
 
+        $output->writeln('Decompressing');
+
         $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz");
+        $phar->decompress();
+
+        $output->writeln('Extracting');
+
+        $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
         $phar->extractTo(dirname(__FILE__, 3) . "/versions/ungoogled/chrome-linux", null, true);
 
         unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz");
+        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
 
         $output->writeln('Archive extracted.');
 
         file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
 
-        chmod($this->generatePlatformExecutable($platformRevision), 0755);
+        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome', 0755);
+        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome_crashpad_handler', 0755);
 
         $output->writeln("Completed! {$platformRevision} currently in use.");
 
