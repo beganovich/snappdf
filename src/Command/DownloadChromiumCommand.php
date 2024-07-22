@@ -163,7 +163,7 @@ class DownloadChromiumCommand extends Command
      */
     public function generatePlatformCode(): string
     {
-        if (PHP_OS == 'Linux') {
+        if (PHP_OS == 'Linux_x64') {
             return 'ungoogled';
         }
 
