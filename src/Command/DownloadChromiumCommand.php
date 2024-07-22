@@ -139,9 +139,9 @@ class DownloadChromiumCommand extends Command
         $archive = new ZipArchive();
 
         if ($archive->open(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip")) {
-            mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}/chrome-linux");
+            mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
 
-            $archive->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}/chrome-linux");
+            $archive->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
             $archive->close();
         }
 
