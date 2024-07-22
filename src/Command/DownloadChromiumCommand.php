@@ -72,6 +72,9 @@ class DownloadChromiumCommand extends Command
             }
         }
 
+        if(PHP_OS == 'Linux')
+            return $this->getUngoogled($output);
+
         $response = json_decode(
             file_get_contents(sprintf($this->revisionUrl, $this->generatePlatformCode()))
         );
@@ -117,6 +120,33 @@ class DownloadChromiumCommand extends Command
         return Command::SUCCESS;
     }
 
+    private function getUngoogled($output)
+    {
+        $platformRevision = 'ungoogled';
+        $url = 'https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/126.0.6478.182-1/ungoogled-chromium_126.0.6478.182-1_linux.tar.xz';
+
+        file_put_contents(
+            dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz",
+            fopen($url, 'r')
+        );
+
+        $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz");
+        $phar->extractTo(dirname(__FILE__, 3) . "/versions/ungoogled/chrome-linux", null, true);
+
+        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz");
+
+        $output->writeln('Archive extracted.');
+
+        file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
+
+        chmod($this->generatePlatformExecutable($platformRevision), 0755);
+
+        $output->writeln("Completed! {$platformRevision} currently in use.");
+
+        return Command::SUCCESS;
+
+    }
+
     /**
      * Generate transformed platform codename for "appspot.com" download.
      *
@@ -125,9 +155,6 @@ class DownloadChromiumCommand extends Command
      */
     public function generatePlatformCode(): string
     {
-        if (PHP_OS == 'Linux') {
-            return 'Linux_x64';
-        }
 
         if (PHP_OS == 'Darwin') {
             return 'Mac';
