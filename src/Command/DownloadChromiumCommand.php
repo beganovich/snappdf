@@ -127,25 +127,25 @@ class DownloadChromiumCommand extends Command
         $output->writeln('Starting download. Ungoogled Chrome');
 
         $platformRevision = 'ungoogled';
-        $url = 'https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/126.0.6478.182-1/ungoogled-chromium_126.0.6478.182-1_linux.tar.xz';
+        $url = 'https://pdf.invoicing.co/ungoogled.zip';
 
         file_put_contents(
-            dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz",
+            dirname(__FILE__, 3) . "/versions/ungoogled.zip",
             fopen($url, 'r')
         );
 
-        $output->writeln('Decompressing');
-
-        $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz");
-        $phar->decompress();
-
         $output->writeln('Extracting');
 
-        $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
-        $phar->extractTo(dirname(__FILE__, 3) . "/versions/ungoogled/chrome-linux", null, true);
+        $archive = new ZipArchive();
 
-        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar.xz");
-        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
+        if ($archive->open(dirname(__FILE__, 3) . "/versions/{$platformRevision}.zip")) {
+            mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}/chrome-linux");
+
+            $archive->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}/chrome-linux");
+            $archive->close();
+        }
+
+        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.zip");
 
         $output->writeln('Archive extracted.');
 
