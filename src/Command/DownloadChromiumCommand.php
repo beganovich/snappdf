@@ -4,13 +4,13 @@
 namespace Beganovich\Snappdf\Command;
 
 use Beganovich\Snappdf\Exception\PlatformNotSupported;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use ZipArchive;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
  * Command signature.
@@ -72,9 +72,6 @@ class DownloadChromiumCommand extends Command
             }
         }
 
-        if(PHP_OS == 'Linux')
-            return $this->getUngoogled($output);
-
         $response = json_decode(
             file_get_contents(sprintf($this->revisionUrl, $this->generatePlatformCode()))
         );
@@ -111,8 +108,7 @@ class DownloadChromiumCommand extends Command
 
         file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
 
-        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome', 0755);
-        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome_crashpad_handler', 0755);
+        chmod($this->generatePlatformExecutable($platformRevision), 0755);
 
         $this->setCrashpadExecutable($platformRevision);
 
@@ -121,40 +117,6 @@ class DownloadChromiumCommand extends Command
         $output->writeln("Completed! {$platformRevision} currently in use.");
 
         return Command::SUCCESS;
-    }
-
-    private function getUngoogled($output)
-    {
-
-        $output->writeln('Starting download. Ungoogled Chrome');
-
-        $platformRevision = 'ungoogled';
-        $url = 'https://pdf.invoicing.co/ungoogled.tar';
-
-        file_put_contents(
-            dirname(__FILE__, 3) . "/versions/ungoogled.tar",
-            fopen($url, 'r')
-        );
-
-        $output->writeln('Extracting');
-        mkdir(dirname(__FILE__, 3) . "/versions/{$platformRevision}");
-
-        $phar = new \PharData(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
-        $phar->extractTo(dirname(__FILE__, 3) . "/versions/{$platformRevision}", null, true);
-
-        unlink(dirname(__FILE__, 3) . "/versions/ungoogled.tar");
-
-        $output->writeln('Archive extracted.');
-
-        file_put_contents(dirname(__FILE__, 3) . '/versions/revision.txt', $platformRevision);
-
-        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome', 0755);
-        chmod(dirname(__FILE__, 3) . '/versions/ungoogled/chrome-linux/chrome_crashpad_handler', 0755);
-
-        $output->writeln("Completed! {$platformRevision} currently in use.");
-
-        return Command::SUCCESS;
-
     }
 
     /**
