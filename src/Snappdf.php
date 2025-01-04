@@ -26,25 +26,55 @@ class Snappdf
     public function __construct()
     {
         $this->chromiumArguments = [
+            // Basic configuration
             '--headless',
+            '--no-sandbox',
             '--disable-gpu',
+            '--no-margins',
+            '--hide-scrollbars',
+            '--no-first-run',
+            '--no-default-browser-check',
+
+            // PDF-specific settings
+            '--print-to-pdf-no-header',
+            '--no-pdf-header-footer',
+
+            // Security settings
+            '--disable-web-security=false',
+            '--block-insecure-private-network-requests',
+            '--block-port=22,25,465,587',
+            '--disable-usb',
+            '--disable-webrtc',
+            '--block-new-web-contents',
+            '--deny-permission-prompts',
+            '--ignore-certificate-errors',
+
+            // Performance & resource settings
+            '--disable-dev-shm-usage',
+            '--disable-software-rasterizer',
+            '--run-all-compositor-stages-before-draw',
+            '--disable-renderer-backgrounding',
+            '--disable-background-timer-throttling',
+            '--disable-background-networking',
+            '--disable-domain-reliability',
+            '--disable-ipc-flooding-protection',
+
+            // Feature disabling
             '--disable-translate',
             '--disable-extensions',
             '--disable-sync',
-            '--disable-background-networking',
-            '--disable-software-rasterizer',
             '--disable-default-apps',
-            '--disable-dev-shm-usage',
+            '--disable-plugins',
+            '--disable-notifications',
+            '--disable-device-discovery-notifications',
+            '--disable-reading-from-canvas',
             '--safebrowsing-disable-auto-update',
-            '--run-all-compositor-stages-before-draw',
-            '--no-first-run',
-            '--no-margins',
-            '--no-sandbox',
-            '--print-to-pdf-no-header',
-            '--no-pdf-header-footer',
-            '--hide-scrollbars',
-            '--ignore-certificate-errors',
+            '--disable-features=SharedArrayBuffer,OutOfBlinkCors,NetworkService,NetworkServiceInProcess',
+
+            // Debug/Output
+            '--dump-dom',
         ];
+
     }
 
     public function getUrl(): ?string
@@ -128,11 +158,13 @@ class Snappdf
 
         foreach ($arguments as $argument) {
             $arg = explode('=', $argument);
-            $matches  = preg_grep('/' . $arg[0] . '(.*)/', $this->chromiumArguments);
+            // Escape the argument for use in regex pattern
+            $pattern = '/' . preg_quote($arg[0], '/') . '(.*)/';
+            $matches = preg_grep($pattern, $this->chromiumArguments);
 
             if (count($matches) > 0) {
                 $this->chromiumArguments = preg_replace(
-                    '/' . $arg[0] . '(.*)/',
+                    $pattern,
                     $argument,
                     $this->chromiumArguments
                 );
@@ -140,6 +172,7 @@ class Snappdf
                 $this->chromiumArguments = array_merge($this->chromiumArguments, [$argument]);
             }
         }
+
 
         return $this;
     }
