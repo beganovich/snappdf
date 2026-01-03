@@ -22,9 +22,9 @@
     "require": {
         "php": ">=8.2",
         "ext-zip": "*",
-        "symfony/process": "^7.1",
-        "symfony/console": "^7.1",
-        "symfony/filesystem": "^7.1"
+        "symfony/process": "^7.4",
+        "symfony/console": "^7.4",
+        "symfony/filesystem": "^7.4"
     },
     "require-dev": {
         "ext-fileinfo": "*",
