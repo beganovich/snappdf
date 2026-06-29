@@ -247,12 +247,10 @@ class Snappdf
             $content['content'],
         );
 
-        $platform = (new DownloadChromiumCommand())->generatePlatformCode();
-
-        if ($platform == 'Win' || $platform == 'Win_x64') {
-            return $this->executeOnWindows($commandInput, $pdf, $content);
-        }
-
+        // Run the browser via an argv array on every platform. Symfony Process escapes
+        // arguments correctly on Windows too, so there is no need for a shell string (the
+        // previous executeOnWindows() built one with `exec(implode(' ', $commands))`, which
+        // let a tainted argument such as setUrl($url) inject shell commands on Windows).
         $process = new Process($commandInput);
 
         $process->run();
@@ -277,23 +275,4 @@ class Snappdf
         $filesystem->appendToFile($path, $pdf);
     }
 
-    private function executeOnWindows(array $commands, $pdf, array $content): ?string
-    {
-        $command = implode(' ', $commands) . ' 2>&1'; // must add 2>&1 to redirect stderr to stdout // see https://stackoverflow.com/a/16665146/7511165
-
-        exec($command, $output, $statusCode);
-
-        if ($statusCode && !empty($output)) {
-            // $output is an array of lines of the command output
-            $message = implode("\n", $output);
-            // ProcessFailedException accepts only a string as $message
-            throw new \Beganovich\Snappdf\Exception\ProcessFailedException($message);
-        }
-
-        $pdfContent = file_get_contents($pdf);
-
-        $this->cleanup($pdf, $content);
-
-        return $pdfContent;
-    }
 }
