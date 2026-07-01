@@ -10,6 +10,7 @@ jobs:
   run:
     runs-on: ${{ matrix.operating-system }}
     strategy:
+      fail-fast: false
       matrix:
         operating-system: ["ubuntu-latest", "windows-latest", "macos-latest"]
         php-versions: ["8.2", "8.3", "8.4", "8.5"]
@@ -21,6 +22,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
+          coverage: none
+          extensions: zip, fileinfo
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -36,9 +39,14 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
-      
-      - name: Download local revision of Chromium
+
+      - name: Download Chromium
         run: php snappdf download
+
+      - name: Use pre-installed Chrome on macOS
+        if: runner.os == 'macOS'
+        run: |
+          echo "SNAPPDF_EXECUTABLE_PATH=/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" >> $GITHUB_ENV
 
       - name: PHPUnit tests
         run: php vendor/bin/phpunit --testdox
