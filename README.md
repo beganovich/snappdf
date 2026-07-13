@@ -88,6 +88,21 @@ $pdf = $snappdf
     ->save('/path/to/your/file.pdf');
 ```
 
+### Symfony Filesystem
+
+```php
+use Symfony\Component\Filesystem\Filesystem;
+
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$pdf = $snappdf
+    ->setHtml('<h1>Hello world!</h1>')
+    ->generate();
+
+$filesystem = new Filesystem();
+$filesystem->dumpFile('/path/to/your/file.pdf', $pdf);
+```
+
 ### Environment Variable
 
 ```bash
