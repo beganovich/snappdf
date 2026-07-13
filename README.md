@@ -129,6 +129,20 @@ file_put_contents('my.pdf', $pdf);
 Storage::disk('s3')->put('my.pdf', $pdf);
 ```
 
+### Stream to Browser
+
+```php
+$snappdf = new \Beganovich\Snappdf\Snappdf();
+
+$pdf = $snappdf
+    ->setHtml('<h1>Hello world!</h1>')
+    ->generate();
+
+header('Content-Type: application/pdf');
+header('Content-Disposition: inline; filename="document.pdf"');
+echo $pdf;
+```
+
 **Priority:** `setChromiumPath()` takes precedence, then `SNAPPDF_EXECUTABLE_PATH`, then local Chromium download.
 
 ## Configuration
