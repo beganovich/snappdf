@@ -22,7 +22,7 @@ use Symfony\Component\Console\Application;
 
 $application = new Application('Snappdf');
 
-$application->add(new DownloadChromiumCommand());
-$application->add(new ConvertHtmlToPdfCommand());
+$application->addCommand(new DownloadChromiumCommand());
+$application->addCommand(new ConvertHtmlToPdfCommand());
 
 $application->run();
