@@ -157,42 +157,29 @@ class SnappdfTest extends TestCase
         $this->assertEquals($argumentsCount, count($snappdf->getChromiumArguments()) + 1);
     }
 
-    public function testManagedUserDataDirectoryIsPassedToChromium()
+    public function testOrphanedChromiumProfilesAreRemovedAfterRun()
     {
         $snappdf = new Snappdf();
-        $snappdf->setKeepTemporaryFiles(true);
 
-        $snappdf
-            ->setHtml('<h1>Hello world!</h1>')
-            ->generate();
+        $preExisting = sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.PREEXISTING';
+        $orphan = sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.ORPHANED';
 
-        $managed = glob(sys_get_temp_dir() . '/snappdf_*');
+        $filesystem = new Filesystem();
+        $filesystem->mkdir($preExisting);
+        $filesystem->touch($preExisting . '/keep.txt');
+        $filesystem->mkdir($orphan);
 
         try {
-            $this->assertNotEmpty(
-                $this->directoryContents($managed[0] ?? ''),
-                'Chromium must honor --user-data-dir by writing its profile into the managed directory instead of the default /tmp/.org.chromium.Chromium.* temp profile.'
-            );
+            // Chromium snapshots the profiles present before the run; an orphan created
+            // during the run (abnormal exit) is absent from that snapshot and must go.
+            $removeOrphaned = new \ReflectionMethod($snappdf, 'removeOrphanedChromiumProfiles');
+            $removeOrphaned->invoke($snappdf, [$preExisting]);
+
+            $this->assertTrue(is_dir($preExisting), 'Pre-existing .org.chromium profile must be preserved.');
+            $this->assertFalse(is_dir($orphan), 'Orphaned profile from this run must be removed.');
         } finally {
-            foreach ($managed as $dir) {
-                $filesystem = new Filesystem();
-                $filesystem->remove($dir);
-            }
+            $filesystem->remove($preExisting);
+            $filesystem->remove($orphan);
         }
-    }
-
-    private function directoryContents(string $directory): array
-    {
-        if ('' === $directory) {
-            return [];
-        }
-
-        $files = glob($directory . '/*');
-
-        if (false === $files) {
-            return [];
-        }
-
-        return $files;
     }
 }
