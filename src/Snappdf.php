@@ -194,7 +194,7 @@ class Snappdf
         return (bool) $this->keepTemporaryFiles;
     }
 
-    private function cleanup(string $tempFile, array $content): void
+    private function cleanup(string $tempFile, array $content, array $existingChromiumProfiles): void
     {
         if ($this->keepTemporaryFiles) {
             return;
@@ -204,6 +204,28 @@ class Snappdf
 
         if ($content['type'] === 'html') {
             unlink($content['content']);
+        }
+
+        // Chromium writes its profile (BrowserMetrics-*.pma etc.) into a temp directory
+        // of the form /tmp/.org.chromium.Chromium.<random>. On a clean exit it removes
+        // the directory itself; on an abnormal exit (crash, timeout, killed process) it
+        // is left behind. Remove any we created during this run.
+        $this->removeOrphanedChromiumProfiles($existingChromiumProfiles);
+    }
+
+    /**
+     * Remove Chromium temp profile directories that did not exist before this run.
+     *
+     * @param string[] $existingProfiles Directories present before the browser started.
+     */
+    private function removeOrphanedChromiumProfiles(array $existingProfiles): void
+    {
+        $filesystem = new Filesystem();
+
+        foreach (glob(sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.*') as $profile) {
+            if (!in_array($profile, $existingProfiles, true)) {
+                $filesystem->remove($profile);
+            }
         }
     }
 
@@ -235,6 +257,8 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
+        $existingChromiumProfiles = glob(sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.*') ?: [];
+
         $commandInput = [$this->getChromiumPath()];
 
         foreach ($this->getChromiumArguments() as $argument) {
@@ -261,7 +285,7 @@ class Snappdf
 
         $pdfContent = file_get_contents($pdf);
 
-        $this->cleanup($pdf, $content);
+        $this->cleanup($pdf, $content, $existingChromiumProfiles);
 
         return $pdfContent;
     }

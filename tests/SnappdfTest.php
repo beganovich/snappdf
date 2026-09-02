@@ -5,6 +5,7 @@ namespace Test\Snappdf;
 use Beganovich\Snappdf\Exception\MissingContent;
 use Beganovich\Snappdf\Snappdf;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 class SnappdfTest extends TestCase
 {
@@ -154,5 +155,31 @@ class SnappdfTest extends TestCase
         $this->assertNotContains('--headless', $snappdf->getChromiumArguments());
 
         $this->assertEquals($argumentsCount, count($snappdf->getChromiumArguments()) + 1);
+    }
+
+    public function testOrphanedChromiumProfilesAreRemovedAfterRun()
+    {
+        $snappdf = new Snappdf();
+
+        $preExisting = sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.PREEXISTING';
+        $orphan = sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.ORPHANED';
+
+        $filesystem = new Filesystem();
+        $filesystem->mkdir($preExisting);
+        $filesystem->touch($preExisting . '/keep.txt');
+        $filesystem->mkdir($orphan);
+
+        try {
+            // Chromium snapshots the profiles present before the run; an orphan created
+            // during the run (abnormal exit) is absent from that snapshot and must go.
+            $removeOrphaned = new \ReflectionMethod($snappdf, 'removeOrphanedChromiumProfiles');
+            $removeOrphaned->invoke($snappdf, [$preExisting]);
+
+            $this->assertTrue(is_dir($preExisting), 'Pre-existing .org.chromium profile must be preserved.');
+            $this->assertFalse(is_dir($orphan), 'Orphaned profile from this run must be removed.');
+        } finally {
+            $filesystem->remove($preExisting);
+            $filesystem->remove($orphan);
+        }
     }
 }
