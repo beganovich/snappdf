@@ -194,7 +194,7 @@ class Snappdf
         return (bool) $this->keepTemporaryFiles;
     }
 
-    private function cleanup(string $tempFile, array $content): void
+    private function cleanup(string $tempFile, array $content, string $userDataDirectory): void
     {
         if ($this->keepTemporaryFiles) {
             return;
@@ -205,6 +205,9 @@ class Snappdf
         if ($content['type'] === 'html') {
             unlink($content['content']);
         }
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($userDataDirectory);
     }
 
     public function generate(): ?string
@@ -235,6 +238,15 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
+        // Chromium writes its profile (BrowserMetrics-*.pma etc.) into the user data
+        // directory. Without an explicit --user-data-dir it falls back to a temp
+        // profile under /tmp/.org.chromium.Chromium.* that is never cleaned up. Point
+        // it at a directory we own and remove it after the run.
+
+        $userDataDirectory = sys_get_temp_dir() . '/' . uniqid('snappdf_', true);
+        $filesystem = new Filesystem();
+        $filesystem->mkdir($userDataDirectory);
+
         $commandInput = [$this->getChromiumPath()];
 
         foreach ($this->getChromiumArguments() as $argument) {
@@ -243,6 +255,7 @@ class Snappdf
 
         array_push(
             $commandInput,
+            '--user-data-dir=' . $userDataDirectory,
             '--print-to-pdf=' . $pdf,
             $content['content'],
         );
@@ -261,7 +274,7 @@ class Snappdf
 
         $pdfContent = file_get_contents($pdf);
 
-        $this->cleanup($pdf, $content);
+        $this->cleanup($pdf, $content, $userDataDirectory);
 
         return $pdfContent;
     }
