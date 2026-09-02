@@ -5,6 +5,7 @@ namespace Test\Snappdf;
 use Beganovich\Snappdf\Exception\MissingContent;
 use Beganovich\Snappdf\Snappdf;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 class SnappdfTest extends TestCase
 {
@@ -154,5 +155,44 @@ class SnappdfTest extends TestCase
         $this->assertNotContains('--headless', $snappdf->getChromiumArguments());
 
         $this->assertEquals($argumentsCount, count($snappdf->getChromiumArguments()) + 1);
+    }
+
+    public function testManagedUserDataDirectoryIsPassedToChromium()
+    {
+        $snappdf = new Snappdf();
+        $snappdf->setKeepTemporaryFiles(true);
+
+        $snappdf
+            ->setHtml('<h1>Hello world!</h1>')
+            ->generate();
+
+        $managed = glob(sys_get_temp_dir() . '/snappdf_*');
+
+        try {
+            $this->assertNotEmpty(
+                $this->directoryContents($managed[0] ?? ''),
+                'Chromium must honor --user-data-dir by writing its profile into the managed directory instead of the default /tmp/.org.chromium.Chromium.* temp profile.'
+            );
+        } finally {
+            foreach ($managed as $dir) {
+                $filesystem = new Filesystem();
+                $filesystem->remove($dir);
+            }
+        }
+    }
+
+    private function directoryContents(string $directory): array
+    {
+        if ('' === $directory) {
+            return [];
+        }
+
+        $files = glob($directory . '/*');
+
+        if (false === $files) {
+            return [];
+        }
+
+        return $files;
     }
 }
