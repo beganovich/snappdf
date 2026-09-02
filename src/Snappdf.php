@@ -194,7 +194,7 @@ class Snappdf
         return (bool) $this->keepTemporaryFiles;
     }
 
-    private function cleanup(string $tempFile, array $content, string $userDataDirectory): void
+    private function cleanup(string $tempFile, array $content, array $existingChromiumProfiles): void
     {
         if ($this->keepTemporaryFiles) {
             return;
@@ -206,8 +206,27 @@ class Snappdf
             unlink($content['content']);
         }
 
+        // Chromium writes its profile (BrowserMetrics-*.pma etc.) into a temp directory
+        // of the form /tmp/.org.chromium.Chromium.<random>. On a clean exit it removes
+        // the directory itself; on an abnormal exit (crash, timeout, killed process) it
+        // is left behind. Remove any we created during this run.
+        $this->removeOrphanedChromiumProfiles($existingChromiumProfiles);
+    }
+
+    /**
+     * Remove Chromium temp profile directories that did not exist before this run.
+     *
+     * @param string[] $existingProfiles Directories present before the browser started.
+     */
+    private function removeOrphanedChromiumProfiles(array $existingProfiles): void
+    {
         $filesystem = new Filesystem();
-        $filesystem->remove($userDataDirectory);
+
+        foreach (glob(sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.*') as $profile) {
+            if (!in_array($profile, $existingProfiles, true)) {
+                $filesystem->remove($profile);
+            }
+        }
     }
 
     public function generate(): ?string
@@ -238,14 +257,7 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
-        // Chromium writes its profile (BrowserMetrics-*.pma etc.) into the user data
-        // directory. Without an explicit --user-data-dir it falls back to a temp
-        // profile under /tmp/.org.chromium.Chromium.* that is never cleaned up. Point
-        // it at a directory we own and remove it after the run.
-
-        $userDataDirectory = sys_get_temp_dir() . '/' . uniqid('snappdf_', true);
-        $filesystem = new Filesystem();
-        $filesystem->mkdir($userDataDirectory);
+        $existingChromiumProfiles = glob(sys_get_temp_dir() . DIRECTORY_SEPARATOR . '.org.chromium.Chromium.*') ?: [];
 
         $commandInput = [$this->getChromiumPath()];
 
@@ -255,7 +267,6 @@ class Snappdf
 
         array_push(
             $commandInput,
-            '--user-data-dir=' . $userDataDirectory,
             '--print-to-pdf=' . $pdf,
             $content['content'],
         );
@@ -274,7 +285,7 @@ class Snappdf
 
         $pdfContent = file_get_contents($pdf);
 
-        $this->cleanup($pdf, $content, $userDataDirectory);
+        $this->cleanup($pdf, $content, $existingChromiumProfiles);
 
         return $pdfContent;
     }
