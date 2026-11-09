@@ -26,6 +26,15 @@ class SnappdfTest extends TestCase
             $this->markTestSkipped('No Unix style HOME on Windows.');
         }
 
+        // Chrome stable on macOS renders the PDF but then exceeds the 10s shutdown budget of
+        // chrome/browser/shutdown_watchdog_mac.cc and exits with RESULT_CODE_HUNG (2) when HOME is
+        // swapped. It only runs cleanly on GitHub's macOS runners with the real HOME, so the test
+        // is skipped instead of masking that with --test-type.
+        
+        if (PHP_OS === 'Darwin') {
+            $this->markTestSkipped('Chrome on macOS hangs on shutdown when HOME is swapped.');
+        }
+
         $home = sys_get_temp_dir() . '/snappdf_unwritable_home_' . uniqid();
         mkdir($home, 0555);
 
