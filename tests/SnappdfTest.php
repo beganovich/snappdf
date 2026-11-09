@@ -60,6 +60,19 @@ class SnappdfTest extends TestCase
         $this->assertNotNull($pdf);
     }
 
+    public function testUserDataDirIsCleanedUpAfterGenerating()
+    {
+        $snappdf = new Snappdf();
+
+        $snappdf
+            ->setHtml('<h1>Hello world</h1>')
+            ->generate();
+
+        $leftovers = glob(sys_get_temp_dir() . '/snappdf_*');
+
+        $this->assertSame([], $leftovers);
+    }
+
     public function testSaveMethod()
     {
         $output = dirname(__FILE__, 2) . '/example.pdf';
