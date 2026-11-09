@@ -194,7 +194,7 @@ class Snappdf
         return (bool) $this->keepTemporaryFiles;
     }
 
-    private function cleanup(string $tempFile, array $content): void
+    private function cleanup(string $tempFile, array $content, string $userDataDir): void
     {
         if ($this->keepTemporaryFiles) {
             return;
@@ -205,6 +205,8 @@ class Snappdf
         if ($content['type'] === 'html') {
             unlink($content['content']);
         }
+
+        (new Filesystem())->remove($userDataDir);
     }
 
     public function generate(): ?string
@@ -235,6 +237,12 @@ class Snappdf
         $pdf = tempnam(sys_get_temp_dir(), 'pdf_');
         rename($pdf, $pdf .= '.pdf');
 
+        // Chromium otherwise invents a random --user-data-dir under the system temp dir and
+        // leaves it behind (with multi-MB BrowserMetrics files) when its process tree is killed
+        // before a clean shutdown. Owning the directory lets us delete it ourselves afterwards.
+        
+        $userDataDir = sys_get_temp_dir() . '/snappdf_' . bin2hex(random_bytes(8));
+
         $commandInput = [$this->getChromiumPath()];
 
         foreach ($this->getChromiumArguments() as $argument) {
@@ -243,6 +251,7 @@ class Snappdf
 
         array_push(
             $commandInput,
+            '--user-data-dir=' . $userDataDir,
             '--print-to-pdf=' . $pdf,
             $content['content'],
         );
@@ -261,7 +270,7 @@ class Snappdf
 
         $pdfContent = file_get_contents($pdf);
 
-        $this->cleanup($pdf, $content);
+        $this->cleanup($pdf, $content, $userDataDir);
 
         return $pdfContent;
     }
