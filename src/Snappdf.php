@@ -264,29 +264,27 @@ class Snappdf
 
         // Chromium's crash handler aborts the whole browser (SIGABRT/SIGTRAP) when it cannot write
         // ~/.config. Web server users such as www-data often have a home directory they cannot write to.
-        
         $home = getenv('HOME') ?: getenv('USERPROFILE');
 
         if ($home && !is_writable($home) && is_writable(sys_get_temp_dir())) {
             // Symfony replaces the entire environment when given one, so pass the inherited one through.
-            
             $process->setEnv([
                 'HOME' => sys_get_temp_dir(),
                 'USERPROFILE' => sys_get_temp_dir(),
             ] + getenv());
         }
 
-        $process->run();
+        try {
+            $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new \Symfony\Component\Process\Exception\ProcessFailedException($process);
+            if (!$process->isSuccessful()) {
+                throw new \Symfony\Component\Process\Exception\ProcessFailedException($process);
+            }
+
+            return file_get_contents($pdf);
+        } finally {
+            $this->cleanup($pdf, $content, $userDataDir);
         }
-
-        $pdfContent = file_get_contents($pdf);
-
-        $this->cleanup($pdf, $content, $userDataDir);
-
-        return $pdfContent;
     }
 
     public function save(string $path): void
