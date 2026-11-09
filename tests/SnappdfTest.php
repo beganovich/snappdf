@@ -20,6 +20,29 @@ class SnappdfTest extends TestCase
         $this->assertNotNull($pdf);
     }
 
+    public function testGeneratingPdfWorksWhenHomeIsNotWritable()
+    {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestSkipped('No Unix style HOME on Windows.');
+        }
+
+        $home = sys_get_temp_dir() . '/snappdf_unwritable_home_' . uniqid();
+        mkdir($home, 0555);
+
+        // Chromium inherits HOME from the PHP process, mimicking www-data whose home is /var/www.
+        putenv('HOME=' . $home);
+
+        try {
+            $pdf = (new Snappdf())->setHtml('<h1>Hello world</h1>')->generate();
+        } finally {
+            putenv('HOME');
+            chmod($home, 0755);
+            rmdir($home);
+        }
+
+        $this->assertNotNull($pdf);
+    }
+
     public function testMissingContentShouldBeThrown()
     {
         $this->expectException(MissingContent::class);
