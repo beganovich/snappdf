@@ -30,12 +30,14 @@ class SnappdfTest extends TestCase
         mkdir($home, 0555);
 
         // Chromium inherits HOME from the PHP process, mimicking www-data whose home is /var/www.
+        $originalHome = getenv('HOME') ?: null;
         putenv('HOME=' . $home);
 
         try {
             $pdf = (new Snappdf())->setHtml('<h1>Hello world</h1>')->generate();
         } finally {
-            putenv('HOME');
+            // putenv('HOME') would unset HOME for all following tests instead of restoring it.
+            $originalHome === null ? putenv('HOME') : putenv('HOME=' . $originalHome);
             chmod($home, 0755);
             rmdir($home);
         }

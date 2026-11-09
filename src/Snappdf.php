@@ -266,10 +266,20 @@ class Snappdf
         // ~/.config. Web server users such as www-data often have a home directory they cannot write to.
         $home = getenv('HOME') ?: getenv('USERPROFILE');
 
-        if ($home && !is_writable($home) && is_writable(sys_get_temp_dir())) {
-            // Symfony merges this with its own default environment (which still wins over getenv()),
-            // so only HOME needs to be overridden here.
-            $process->setEnv(['HOME' => sys_get_temp_dir(), 'USERPROFILE' => sys_get_temp_dir()]);
+        if ($home && !is_writable($home)) {
+            // On macOS the system temp dir carries restrictive ACLs and is also Chrome's TMPDIR, so
+            // use a dedicated directory under it instead of the temp dir itself.
+            $fallbackHome = sys_get_temp_dir() . '/.snappdf-home';
+
+            if (!is_dir($fallbackHome)) {
+                @mkdir($fallbackHome, 0700, true);
+            }
+
+            if (is_dir($fallbackHome) && is_writable($fallbackHome)) {
+                // Symfony merges this with its own default environment (which still wins over getenv()),
+                // so only HOME needs to be overridden here.
+                $process->setEnv(['HOME' => $fallbackHome, 'USERPROFILE' => $fallbackHome]);
+            }
         }
 
         try {
