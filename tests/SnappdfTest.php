@@ -20,6 +20,40 @@ class SnappdfTest extends TestCase
         $this->assertNotNull($pdf);
     }
 
+    public function testGeneratingPdfWorksWhenHomeIsNotWritable()
+    {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $this->markTestSkipped('No Unix style HOME on Windows.');
+        }
+
+        // Chrome stable on macOS renders the PDF but then exceeds the 10s shutdown budget of
+        // chrome/browser/shutdown_watchdog_mac.cc and exits with RESULT_CODE_HUNG (2) when HOME is
+        // swapped. It only runs cleanly on GitHub's macOS runners with the real HOME, so the test
+        // is skipped instead of masking that with --test-type.
+        
+        if (PHP_OS === 'Darwin') {
+            $this->markTestSkipped('Chrome on macOS hangs on shutdown when HOME is swapped.');
+        }
+
+        $home = sys_get_temp_dir() . '/snappdf_unwritable_home_' . uniqid();
+        mkdir($home, 0555);
+
+        // Chromium inherits HOME from the PHP process, mimicking www-data whose home is /var/www.
+        $originalHome = getenv('HOME') ?: null;
+        putenv('HOME=' . $home);
+
+        try {
+            $pdf = (new Snappdf())->setHtml('<h1>Hello world</h1>')->generate();
+        } finally {
+            // putenv('HOME') would unset HOME for all following tests instead of restoring it.
+            $originalHome === null ? putenv('HOME') : putenv('HOME=' . $originalHome);
+            chmod($home, 0755);
+            rmdir($home);
+        }
+
+        $this->assertNotNull($pdf);
+    }
+
     public function testMissingContentShouldBeThrown()
     {
         $this->expectException(MissingContent::class);
