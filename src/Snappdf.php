@@ -267,11 +267,9 @@ class Snappdf
         $home = getenv('HOME') ?: getenv('USERPROFILE');
 
         if ($home && !is_writable($home) && is_writable(sys_get_temp_dir())) {
-            // Symfony replaces the entire environment when given one, so pass the inherited one through.
-            $process->setEnv([
-                'HOME' => sys_get_temp_dir(),
-                'USERPROFILE' => sys_get_temp_dir(),
-            ] + getenv());
+            // Symfony merges this with its own default environment (which still wins over getenv()),
+            // so only HOME needs to be overridden here.
+            $process->setEnv(['HOME' => sys_get_temp_dir(), 'USERPROFILE' => sys_get_temp_dir()]);
         }
 
         try {
